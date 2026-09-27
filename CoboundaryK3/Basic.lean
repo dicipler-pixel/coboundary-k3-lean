@@ -133,6 +133,11 @@ theorem witness_k4 :
     defect w4 = 8 ∧ (∀ β, 6 ≤ cost w4 β) ∧ cost w4 (fun _ => 1) = 6 ∧ 8 * 3 = 4 * 6 :=
   ⟨by decide +kernel, gauge_lower w4 6 (by decide +kernel), by decide +kernel, by norm_num⟩
 
+/-- **Theorem 3, k = 5.** `N = 10`, `D = 6`: `N/D = 5/3`. -/
+theorem witness_k5 :
+    defect w5 = 10 ∧ (∀ β, 6 ≤ cost w5 β) ∧ cost w5 (fun _ => 1) = 6 ∧ 10 * 3 = 5 * 6 :=
+  ⟨by decide +kernel, gauge_lower w5 6 (by decide +kernel), by decide +kernel, by norm_num⟩
+
 /-! ## Proposition 4: the non-abelian mechanism at k = 4 -/
 
 /-- **Proposition 4, mechanism.** Around the witness triangle the three distinct transpositions
