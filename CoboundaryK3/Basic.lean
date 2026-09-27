@@ -206,16 +206,19 @@ theorem search_sound (D : ℕ) : ∀ (fuel : ℕ) (l : List S3), search α D fue
         cases ext with
         | nil => simp at hl
         | cons a t => exact ⟨a, t, rfl⟩
-      have := search_sound f (l ++ [a]) (h a (mem_S3list a)) ext' (by simpa using hl)
+      have := search_sound D f (l ++ [a]) (h a (mem_S3list a)) ext' (by simpa using hl)
       simpa using this
 
 theorem pcost_ofFn {m : ℕ} (α : Fin (m + 1) → Fin (m + 1) → S3) (β : Fin (m + 1) → S3) :
     pcost α (List.ofFn β) = cost α β := by
+  have hg : ∀ i : Fin (m + 1), (List.ofFn β).getD i 1 = β i := fun i => by
+    rw [List.getD_eq_getElem _ _ (by simp), List.getElem_ofFn]
   unfold pcost cost
   congr 1
   apply List.map_congr_left
   intro e _
-  simp [term, List.getD_eq_getElem?_getD]
+  rw [if_pos (by rw [List.length_ofFn]; exact e.2.isLt)]
+  simp only [term, hg]
 
 /-- **Exhaustion loses nothing**, branch-and-bound form. -/
 theorem gauge_lower_bb {m : ℕ} (α : Fin (m + 1) → Fin (m + 1) → S3) (D : ℕ)
@@ -257,6 +260,7 @@ theorem witness_k5 :
     defect w5 = 10 ∧ (∀ β, 6 ≤ cost w5 β) ∧ cost w5 (fun _ => 1) = 6 ∧ 10 * 3 = 5 * 6 :=
   ⟨by decide +kernel, gauge_lower w5 6 (by decide +kernel), by decide +kernel, by norm_num⟩
 
+set_option maxHeartbeats 0 in
 /-- **Theorem 3, k = 6.** `N = 36`, `D = 18`: `N/D = 2 = 6/3`. -/
 theorem witness_k6 :
     defect w6 = 36 ∧ (∀ β, 18 ≤ cost w6 β) ∧ cost w6 (fun _ => 1) = 18 ∧ 36 * 3 = 6 * 18 :=
