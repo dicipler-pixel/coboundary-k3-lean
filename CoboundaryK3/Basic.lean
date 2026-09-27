@@ -147,15 +147,36 @@ theorem k4_mechanism :
 def disp {n : ℕ} (π : Perm (Fin n)) (i : Fin n) : Fin n → ℤ :=
   fun t => (if t = π i then 1 else 0) - (if t = i then 1 else 0)
 
+theorem delta_prod {n : ℕ} (a b : Fin n) :
+    ∑ t : Fin n, (if t = a then (1 : ℤ) else 0) * (if t = b then 1 else 0) =
+      if a = b then 1 else 0 := by
+  rw [Finset.sum_eq_single a]
+  · simp
+  · intro t _ ht
+    simp [ht]
+  · simp
+
 /-- **Theorem 8.** `⟨e_{π i} − e_i, e_{π j} − e_j⟩ = 2[i = j] − [π i = j] − [π j = i]`, i.e.
 twice the Gram matrix is `2I − A` for the adjacency `A` of the cycle graph of `π`. -/
 theorem disp_gram {n : ℕ} (π : Perm (Fin n)) (i j : Fin n) :
     ∑ t, disp π i t * disp π j t =
       (if i = j then 2 else 0) - (if π i = j then 1 else 0) - (if π j = i then 1 else 0) := by
-  simp only [disp]
-  simp only [sub_mul, mul_sub, Finset.sum_sub_distrib, ite_mul, one_mul, zero_mul,
-    Finset.sum_ite_eq', Finset.sum_ite_eq, Finset.mem_univ, if_true]
-  split_ifs <;> simp_all <;> omega
+  have hexp : ∀ t, disp π i t * disp π j t =
+      (if t = π i then (1 : ℤ) else 0) * (if t = π j then 1 else 0)
+      - (if t = π i then (1 : ℤ) else 0) * (if t = j then 1 else 0)
+      - (if t = i then (1 : ℤ) else 0) * (if t = π j then 1 else 0)
+      + (if t = i then (1 : ℤ) else 0) * (if t = j then 1 else 0) := by
+    intro t
+    simp only [disp]
+    ring
+  simp only [hexp, Finset.sum_add_distrib, Finset.sum_sub_distrib, delta_prod]
+  have hπ : (π i = π j) ↔ i = j := π.injective.eq_iff
+  by_cases hij : i = j
+  · subst hij
+    by_cases h : π i = i <;> simp [h]
+  · have h1 : ¬ π i = π j := fun h => hij (hπ.mp h)
+    by_cases h2 : π i = j <;> by_cases h3 : i = π j <;>
+      simp [hij, h1, h2, h3, eq_comm] <;> omega
 
 /-- **Theorem 8, cycle spectrum.** The Laplacian eigenvalue `2 − 2cos(2πj/ℓ)` of `C_ℓ` equals
 `4 sin²(πj/ℓ)`. -/
