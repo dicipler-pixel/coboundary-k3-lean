@@ -143,6 +143,96 @@ theorem gauge_lower' {m : ℕ} (α : Fin (m + 1) → Fin (m + 1) → S3) (D : �
   have := allG_sound m _ h (Fin.tail β')
   simpa using this
 
+
+/-! ### Branch-and-bound exhaustion
+
+Assign the gauge one vertex at a time. The cost of the edges whose endpoints are both assigned
+can only grow as more vertices are assigned, so once it reaches `D` every completion costs at
+least `D` and the branch is closed. `search_sound` proves this pruning loses nothing. -/
+
+section Search
+
+variable {k : ℕ} (α : Fin k → Fin k → S3)
+
+/-- The term of edge `e` under a partial gauge `l` (vertex `v` gets `l[v]`). -/
+def term (l : List S3) (e : Fin k × Fin k) : ℕ :=
+  moved ((l.getD e.1 1)⁻¹ * α e.1 e.2 * l.getD e.2 1)
+
+/-- The cost of the edges both of whose endpoints are assigned. -/
+def pcost (l : List S3) : ℕ :=
+  ((edges k).map fun e => if e.2.val < l.length then term α l e else 0).sum
+
+theorem mem_edges {e : Fin k × Fin k} (h : e ∈ edges k) : e.1 < e.2 := by
+  simp only [edges, List.mem_flatMap, List.mem_map, List.mem_filter, decide_eq_true_eq] at h
+  obtain ⟨u, _, v, ⟨_, huv⟩, rfl⟩ := h
+  exact huv
+
+theorem sum_map_le {ι : Type*} (l : List ι) (f g : ι → ℕ) (h : ∀ i ∈ l, f i ≤ g i) :
+    (l.map f).sum ≤ (l.map g).sum := by
+  induction l with
+  | nil => simp
+  | cons a t ih =>
+    simp only [List.map_cons, List.sum_cons]
+    exact Nat.add_le_add (h a (by simp)) (ih fun i hi => h i (by simp [hi]))
+
+theorem pcost_mono (l ext : List S3) : pcost α l ≤ pcost α (l ++ ext) := by
+  apply sum_map_le
+  intro e he
+  have h12 := mem_edges he
+  split_ifs with h1 h2 h2
+  · have h1' : e.1.val < l.length := lt_trans h12 h1
+    simp only [term, List.getD_append _ _ _ _ h1, List.getD_append _ _ _ _ h1']
+    exact le_refl _
+  · exact absurd (by simp; omega) h2
+  · exact Nat.zero_le _
+  · exact le_refl _
+
+/-- The branch-and-bound search: `true` means every completion of `l` by `fuel` more vertices
+costs at least `D`. -/
+def search (D : ℕ) : ℕ → List S3 → Bool
+  | 0, l => decide (D ≤ pcost α l)
+  | f + 1, l => decide (D ≤ pcost α l) || S3list.all fun a => search D f (l ++ [a])
+
+theorem search_sound (D : ℕ) : ∀ (fuel : ℕ) (l : List S3), search α D fuel l = true →
+    ∀ ext : List S3, ext.length = fuel → D ≤ pcost α (l ++ ext)
+  | 0, l, h, ext, hl => by
+    rw [List.length_eq_zero_iff.mp hl, List.append_nil]
+    simpa [search] using h
+  | f + 1, l, h, ext, hl => by
+    simp only [search, Bool.or_eq_true, decide_eq_true_eq, List.all_eq_true] at h
+    rcases h with h | h
+    · exact h.trans (pcost_mono α l ext)
+    · obtain ⟨a, ext', rfl⟩ : ∃ a ext', ext = a :: ext' := by
+        cases ext with
+        | nil => simp at hl
+        | cons a t => exact ⟨a, t, rfl⟩
+      have := search_sound f (l ++ [a]) (h a (mem_S3list a)) ext' (by simpa using hl)
+      simpa using this
+
+theorem pcost_ofFn {m : ℕ} (α : Fin (m + 1) → Fin (m + 1) → S3) (β : Fin (m + 1) → S3) :
+    pcost α (List.ofFn β) = cost α β := by
+  unfold pcost cost
+  congr 1
+  apply List.map_congr_left
+  intro e _
+  simp [term, List.getD_eq_getElem?_getD]
+
+/-- **Exhaustion loses nothing**, branch-and-bound form. -/
+theorem gauge_lower_bb {m : ℕ} (α : Fin (m + 1) → Fin (m + 1) → S3) (D : ℕ)
+    (h : search α D m [1] = true) : ∀ β, D ≤ cost α β := by
+  intro β
+  rw [← cost_mul_const α β (β 0)⁻¹]
+  set β' : Fin (m + 1) → S3 := fun v => β v * (β 0)⁻¹ with hβ'
+  have h0 : β' 0 = 1 := by simp [hβ']
+  have := search_sound α D m [1] h (List.ofFn fun i : Fin m => β' i.succ) (by simp)
+  rw [← pcost_ofFn]
+  have e : List.ofFn β' = [1] ++ List.ofFn fun i : Fin m => β' i.succ := by
+    rw [List.ofFn_succ, h0]; rfl
+  rw [e]
+  exact this
+
+end Search
+
 /-- A cochain from its list of non-identity edges. -/
 def cochain (k : ℕ) (W : List ((ℕ × ℕ) × S3)) : Fin k → Fin k → S3 :=
   fun u v => ((W.lookup (u.val, v.val)).getD 1)
@@ -170,7 +260,7 @@ theorem witness_k5 :
 /-- **Theorem 3, k = 6.** `N = 36`, `D = 18`: `N/D = 2 = 6/3`. -/
 theorem witness_k6 :
     defect w6 = 36 ∧ (∀ β, 18 ≤ cost w6 β) ∧ cost w6 (fun _ => 1) = 18 ∧ 36 * 3 = 6 * 18 :=
-  ⟨by decide +kernel, gauge_lower' w6 18 (by decide +kernel), by decide +kernel, by norm_num⟩
+  ⟨by decide +kernel, gauge_lower_bb w6 18 (by decide +kernel), by decide +kernel, by norm_num⟩
 
 /-! ## Proposition 4: the non-abelian mechanism at k = 4 -/
 
