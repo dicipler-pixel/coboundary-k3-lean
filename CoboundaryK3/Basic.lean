@@ -114,6 +114,35 @@ theorem gauge_lower {m : ℕ} (α : Fin (m + 1) → Fin (m + 1) → S3) (D : ℕ
   have := List.all_eq_true.mp h (Fin.tail β') (mem_funs m _)
   simpa using this
 
+
+/-- Check a Boolean test on every function `Fin n → Sym(3)` without building the list. -/
+def allG : (n : ℕ) → ((Fin n → S3) → Bool) → Bool
+  | 0, p => p Fin.elim0
+  | n + 1, p => S3list.all fun a => allG n (fun t => p (Fin.cons a t))
+
+theorem allG_sound : ∀ (n : ℕ) (p : (Fin n → S3) → Bool), allG n p = true → ∀ f, p f = true
+  | 0, p, h, f => by
+    have : f = Fin.elim0 := funext fun i => i.elim0
+    rw [this]; exact h
+  | n + 1, p, h, f => by
+    simp only [allG, List.all_eq_true] at h
+    have := allG_sound n _ (h (f 0) (mem_S3list _)) (Fin.tail f)
+    simpa [Fin.cons_self_tail] using this
+
+/-- **Exhaustion loses nothing**, streamed form. -/
+theorem gauge_lower' {m : ℕ} (α : Fin (m + 1) → Fin (m + 1) → S3) (D : ℕ)
+    (h : allG m (fun t => decide (D ≤ cost α (Fin.cons 1 t))) = true) :
+    ∀ β, D ≤ cost α β := by
+  intro β
+  rw [← cost_mul_const α β (β 0)⁻¹]
+  set β' : Fin (m + 1) → S3 := fun v => β v * (β 0)⁻¹ with hβ'
+  have h0 : β' 0 = 1 := by simp [hβ']
+  have hcons : β' = Fin.cons 1 (Fin.tail β') := by
+    rw [← h0]; exact (Fin.cons_self_tail β').symm
+  rw [hcons]
+  have := allG_sound m _ h (Fin.tail β')
+  simpa using this
+
 /-- A cochain from its list of non-identity edges. -/
 def cochain (k : ℕ) (W : List ((ℕ × ℕ) × S3)) : Fin k → Fin k → S3 :=
   fun u v => ((W.lookup (u.val, v.val)).getD 1)
@@ -137,6 +166,11 @@ theorem witness_k4 :
 theorem witness_k5 :
     defect w5 = 10 ∧ (∀ β, 6 ≤ cost w5 β) ∧ cost w5 (fun _ => 1) = 6 ∧ 10 * 3 = 5 * 6 :=
   ⟨by decide +kernel, gauge_lower w5 6 (by decide +kernel), by decide +kernel, by norm_num⟩
+
+/-- **Theorem 3, k = 6.** `N = 36`, `D = 18`: `N/D = 2 = 6/3`. -/
+theorem witness_k6 :
+    defect w6 = 36 ∧ (∀ β, 18 ≤ cost w6 β) ∧ cost w6 (fun _ => 1) = 18 ∧ 36 * 3 = 6 * 18 :=
+  ⟨by decide +kernel, gauge_lower' w6 18 (by decide +kernel), by decide +kernel, by norm_num⟩
 
 /-! ## Proposition 4: the non-abelian mechanism at k = 4 -/
 
