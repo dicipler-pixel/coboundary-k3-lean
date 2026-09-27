@@ -1,1 +1,1 @@
-{"modules":[{"module":"CoboundaryK3.Basic","path":"CoboundaryK3/Basic.lean"}],"expected_theorems":23,"expected_false_controls":3,"root_imports":["CoboundaryK3.Basic"]}
+{"modules":[{"module":"CoboundaryK3.Basic","path":"CoboundaryK3/Basic.lean"}],"expected_theorems":25,"expected_false_controls":3,"root_imports":["CoboundaryK3.Basic"]}
