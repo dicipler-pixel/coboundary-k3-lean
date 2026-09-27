@@ -173,7 +173,11 @@ theorem disp_gram {n : ℕ} (π : Perm (Fin n)) (i j : Fin n) :
   have hπ : (π i = π j) ↔ i = j := π.injective.eq_iff
   by_cases hij : i = j
   · subst hij
-    by_cases h : π i = i <;> simp [h]
+    by_cases h : π i = i
+    · simp [h]
+    · have h' : ¬ i = π i := fun e => h e.symm
+      simp [h, h']
+      norm_num
   · have h1 : ¬ π i = π j := fun h => hij (hπ.mp h)
     by_cases h2 : π i = j <;> by_cases h3 : i = π j <;>
       simp [hij, h1, h2, h3, eq_comm] <;> omega
