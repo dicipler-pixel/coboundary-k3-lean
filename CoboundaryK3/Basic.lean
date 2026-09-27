@@ -212,7 +212,7 @@ theorem search_sound (D : ℕ) : ∀ (fuel : ℕ) (l : List S3), search α D fue
 theorem pcost_ofFn {m : ℕ} (α : Fin (m + 1) → Fin (m + 1) → S3) (β : Fin (m + 1) → S3) :
     pcost α (List.ofFn β) = cost α β := by
   have hg : ∀ i : Fin (m + 1), (List.ofFn β).getD i 1 = β i := fun i => by
-    rw [List.getD_eq_getElem _ _ (by simp), List.getElem_ofFn]
+    rw [List.getD_eq_getElem _ _ (by simp; exact Nat.lt_succ_iff.mp i.isLt), List.getElem_ofFn]
   unfold pcost cost
   congr 1
   apply List.map_congr_left
@@ -249,6 +249,14 @@ def w5 : Fin 5 → Fin 5 → S3 := cochain 5 [((0, 1), t01), ((1, 2), t01), ((2,
 def w6 : Fin 6 → Fin 6 → S3 :=
   cochain 6 [((0, 1), c1), ((1, 3), c1), ((0, 3), c2), ((0, 4), c2), ((1, 5), c2), ((4, 5), c2)]
 
+def w7 : Fin 7 → Fin 7 → S3 :=
+  cochain 7 [((0, 1), t01), ((0, 3), t01), ((0, 4), t01), ((1, 2), t01), ((1, 5), t01), ((2, 3), t01)]
+
+def w8 : Fin 8 → Fin 8 → S3 :=
+  cochain 8 [((0, 1), t12), ((0, 7), t12), ((1, 2), t12), ((2, 5), t12), ((2, 7), t12),
+    ((1, 3), t01), ((1, 4), t01), ((1, 6), t01), ((3, 7), t01),
+    ((0, 4), t02), ((2, 3), t02), ((2, 4), t02), ((4, 7), c2)]
+
 /-- **Theorem 3, k = 4.** `N = 8`, every gauge costs at least `6`, and `6` is attained:
 `N/D = 4/3`. -/
 theorem witness_k4 :
@@ -265,6 +273,19 @@ set_option maxHeartbeats 0 in
 theorem witness_k6 :
     defect w6 = 36 ∧ (∀ β, 18 ≤ cost w6 β) ∧ cost w6 (fun _ => 1) = 18 ∧ 36 * 3 = 6 * 18 :=
   ⟨by decide +kernel, gauge_lower_bb w6 18 (by decide +kernel), by decide +kernel, by norm_num⟩
+
+set_option maxHeartbeats 0 in
+/-- **Theorem 3, k = 7.** `N = 28`, `D = 12`: `N/D = 7/3`. -/
+theorem witness_k7 :
+    defect w7 = 28 ∧ (∀ β, 12 ≤ cost w7 β) ∧ cost w7 (fun _ => 1) = 12 ∧ 28 * 3 = 7 * 12 :=
+  ⟨by decide +kernel, gauge_lower_bb w7 12 (by decide +kernel), by decide +kernel, by norm_num⟩
+
+set_option maxHeartbeats 0 in
+/-- **Theorem 3, k = 8.** `N = 72`, `D = 27`: `N/D = 8/3`. The residual carries twelve
+transpositions (all three of `Sym(3)`) and one 3-cycle. -/
+theorem witness_k8 :
+    defect w8 = 72 ∧ (∀ β, 27 ≤ cost w8 β) ∧ cost w8 (fun _ => 1) = 27 ∧ 72 * 3 = 8 * 27 :=
+  ⟨by decide +kernel, gauge_lower_bb w8 27 (by decide +kernel), by decide +kernel, by norm_num⟩
 
 /-! ## Proposition 4: the non-abelian mechanism at k = 4 -/
 
