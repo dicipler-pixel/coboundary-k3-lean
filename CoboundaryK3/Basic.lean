@@ -131,17 +131,17 @@ def w6 : Fin 6 → Fin 6 → S3 :=
 `N/D = 4/3`. -/
 theorem witness_k4 :
     defect w4 = 8 ∧ (∀ β, 6 ≤ cost w4 β) ∧ cost w4 (fun _ => 1) = 6 ∧ 8 * 3 = 4 * 6 :=
-  ⟨by decide, gauge_lower w4 6 (by decide), by decide, by norm_num⟩
+  ⟨by decide +kernel, gauge_lower w4 6 (by decide +kernel), by decide +kernel, by norm_num⟩
 
 /-- **Theorem 3, k = 5.** `N = 10`, `D = 6`: `N/D = 5/3`. -/
 theorem witness_k5 :
     defect w5 = 10 ∧ (∀ β, 6 ≤ cost w5 β) ∧ cost w5 (fun _ => 1) = 6 ∧ 10 * 3 = 5 * 6 :=
-  ⟨by decide, gauge_lower w5 6 (by decide), by decide, by norm_num⟩
+  ⟨by decide +kernel, gauge_lower w5 6 (by decide +kernel), by decide +kernel, by norm_num⟩
 
 /-- **Theorem 3, k = 6.** `N = 36`, `D = 18`: `N/D = 2 = 6/3`. -/
 theorem witness_k6 :
     defect w6 = 36 ∧ (∀ β, 18 ≤ cost w6 β) ∧ cost w6 (fun _ => 1) = 18 ∧ 36 * 3 = 6 * 18 :=
-  ⟨by decide, gauge_lower w6 18 (by decide), by decide, by norm_num⟩
+  ⟨by decide +kernel, gauge_lower w6 18 (by decide +kernel), by decide +kernel, by norm_num⟩
 
 /-! ## Proposition 4: the non-abelian mechanism at k = 4 -/
 
@@ -162,18 +162,10 @@ twice the Gram matrix is `2I − A` for the adjacency `A` of the cycle graph of 
 theorem disp_gram {n : ℕ} (π : Perm (Fin n)) (i j : Fin n) :
     ∑ t, disp π i t * disp π j t =
       (if i = j then 2 else 0) - (if π i = j then 1 else 0) - (if π j = i then 1 else 0) := by
-  simp only [disp, sub_mul, mul_sub, Finset.sum_sub_distrib]
-  simp only [mul_ite, mul_one, mul_zero, ite_mul, one_mul, zero_mul]
-  simp only [Finset.sum_ite_eq', Finset.mem_univ, if_true, Finset.sum_ite_irrel,
-    Finset.sum_const_zero]
-  simp only [← ite_and]
-  by_cases hij : i = j
-  · subst hij
-    simp [eq_comm]
-    split_ifs <;> omega
-  · have hπ : π i ≠ π j := fun h => hij (π.injective h)
-    simp [hij, hπ]
-    split_ifs <;> simp_all <;> omega
+  simp only [disp]
+  simp only [sub_mul, mul_sub, Finset.sum_sub_distrib, ite_mul, one_mul, zero_mul,
+    Finset.sum_ite_eq', Finset.sum_ite_eq, Finset.mem_univ, if_true]
+  split_ifs <;> simp_all <;> omega
 
 /-- **Theorem 8, cycle spectrum.** The Laplacian eigenvalue `2 − 2cos(2πj/ℓ)` of `C_ℓ` equals
 `4 sin²(πj/ℓ)`. -/
