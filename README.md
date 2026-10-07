@@ -34,8 +34,8 @@ minimum is the true minimum over every gauge. Lean now checks that exhaustively,
 | Theorem 3, `k = 8` | `N = 72`, `D = 27`, `N/D = 8/3`; the residual has twelve transpositions and one 3-cycle | `witness_k8` |
 | Sec. 3.1 | Exhausting gauges with `β(0) = 1` loses nothing: a constant right factor conjugates every edge term, and the Hamming count is conjugation-invariant | `moved_conj`, `cost_mul_const`, `gauge_lower`, `gauge_lower'`, `gauge_lower_bb` |
 | Sec. 3.1 | The branch-and-bound search used for `k = 6, 7, 8` is sound: once the cost of the assigned edges reaches `D`, every completion does | `pcost_mono`, `search_sound`, `search_step`, `search_split`, `pcost_ofFn` |
-| Prop. 4 | Three distinct transpositions around a triangle compose to a transposition, while each adjacent product is a 3-cycle | `k4_mechanism` |
-| Theorem 8 | `⟨e_{πi}−e_i, e_{πj}−e_j⟩ = 2[i=j] − [πi=j] − [πj=i]`: the displacement Gram is half the cycle-graph Laplacian; its eigenvalues `2 − 2cos 2x = 4 sin² x` | `delta_prod`, `disp_gram`, `cycle_laplacian_eigen` |
+| Prop. 4 | Around the `k = 4` witness triangle the three distinct transpositions compose to a transposition (`t₁₂ t₀₂ t₀₁⁻¹`), while each adjacent product is a 3-cycle | `k4_mechanism` |
+| Theorem 8 | `⟨e_{πi}−e_i, e_{πj}−e_j⟩ = 2[i=j] − [πi=j] − [πj=i]`: these inner products are the entries of `2I − A`, the Laplacian of the cycle graph of `π`, so the Gram matrix normalised by `½` is half that Laplacian; and the identity `2 − 2cos 2x = 4 sin² x` that rewrites the cycle eigenvalues (the eigenvalues themselves are cited) | `delta_prod`, `disp_gram`, `cycle_laplacian_eigen` |
 
 The file is [`CoboundaryK3/Basic.lean`](CoboundaryK3/Basic.lean). The exhaustions run in the
 Lean kernel (`decide +kernel`), not in compiled code: no `native_decide`, and the axiom audit

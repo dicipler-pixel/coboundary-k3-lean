@@ -1468,7 +1468,7 @@ theorem k4_mechanism :
     moved (t12 * t02 * t01⁻¹) = 2 ∧ moved (t12 * t02) = 3 ∧ moved (t02 * t01) = 3 ∧
       moved (t01 * t12) = 3 := by decide
 
-/-! ## Theorem 8: the displacement Gram is half the cycle Laplacian -/
+/-! ## Theorem 8: the displacement Gram and the cycle Laplacian -/
 
 /-- The displacement `e_{π(i)} − e_i` of point `i`. -/
 def disp {n : ℕ} (π : Perm (Fin n)) (i : Fin n) : Fin n → ℤ :=
@@ -1484,7 +1484,8 @@ theorem delta_prod {n : ℕ} (a b : Fin n) :
   · simp
 
 /-- **Theorem 8.** `⟨e_{π i} − e_i, e_{π j} − e_j⟩ = 2[i = j] − [π i = j] − [π j = i]`, i.e.
-twice the Gram matrix is `2I − A` for the adjacency `A` of the cycle graph of `π`. -/
+the matrix of these inner products is `2I − A` for the adjacency `A` of the cycle graph of `π`,
+the Laplacian of that graph; the Gram matrix normalised by `½` is half of it. -/
 theorem disp_gram {n : ℕ} (π : Perm (Fin n)) (i j : Fin n) :
     ∑ t, disp π i t * disp π j t =
       (if i = j then 2 else 0) - (if π i = j then 1 else 0) - (if π j = i then 1 else 0) := by
@@ -1508,8 +1509,8 @@ theorem disp_gram {n : ℕ} (π : Perm (Fin n)) (i j : Fin n) :
     by_cases h2 : π i = j <;> by_cases h3 : i = π j <;>
       simp [hij, h1, h2, h3, eq_comm] <;> omega
 
-/-- **Theorem 8, cycle spectrum.** The Laplacian eigenvalue `2 − 2cos(2πj/ℓ)` of `C_ℓ` equals
-`4 sin²(πj/ℓ)`. -/
+/-- **Theorem 8, cycle spectrum.** The identity `2 − 2cos 2x = 4 sin² x`, which rewrites the
+Laplacian eigenvalue `2 − 2cos(2πj/ℓ)` of `C_ℓ` (cited, not proved here) as `4 sin²(πj/ℓ)`. -/
 theorem cycle_laplacian_eigen (x : ℝ) : 2 - 2 * Real.cos (2 * x) = 4 * Real.sin x ^ 2 := by
   rw [Real.cos_two_mul]
   nlinarith [Real.sin_sq_add_cos_sq x]
