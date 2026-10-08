@@ -1,0 +1,5 @@
+(1) max rel. error, l^3 D_l vs zeta expansion, l in {2..256}: 1.404e-33
+    spectra equal: True
+(2) pi_a: m_b(1)=1.000000000000  spectral measure seen by b: { 0: 1.000 }
+(2) pi_b: m_b(1)=0.666666666667  spectral measure seen by b: { 0: 0.500, 2: 0.500 }
+(3) 300 random pairs, max |d_H - (2/n) sum sin^2 theta| and |sum sin^2 theta - sum sin^2(phi/2)|: 5.33e-15

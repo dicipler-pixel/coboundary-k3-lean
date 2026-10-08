@@ -1,0 +1,5 @@
+A1 star identity sum_x cost = 3N, 120 random cochains in Sym(4), Sym(5) on K_4..K_7: failures = 0
+A2 replication on random K_4 cochains, q=2, exhaustive 6^7 gauges: [(6, 3, 48, 12), (10, 5, 80, 20), (10, 6, 80, 24), (7, 4, 56, 16), (7, 4, 56, 16), (10, 6, 80, 24)]  all N->8N, D->4D: True
+A3 parity retraction, 19 random binary cochains on K_4..K_6: S3 minimum != H minimum in 0 cases
+A4 K_{2,2} at k=6 in Sym(3): N, D, N/D = 16 8 2.0  (k/3 = 2)
+A5 cross-degree seed minima m=2,3,4: {2: '10/3', 3: '2', 4: '3'}  (paper: 10/3, 2, 3)

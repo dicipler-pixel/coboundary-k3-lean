@@ -1,0 +1,7 @@
+control 3_1: Fox(trivial)/Delta = unit * t^k ; k estimates [0. 0. 0.]
+control 4_1: Fox(trivial)/Delta = unit * t^k ; k estimates [-1. -1. -1.]
+control 5_2: Fox(trivial)/Delta = unit * t^k ; k estimates [0. 0. 0.]
+3_1: homomorphism True; C = |Delta T|/d_H over n=6..96 at eta=1e-2: [0.07503296 0.07503296 0.07503296 0.07503296 0.07503296]; spread over eta 1e-2..1e-5: 7.57e-06
+4_1: homomorphism True; C = |Delta T|/d_H over n=6..96 at eta=1e-2: [0.0657907 0.0657907 0.0657907 0.0657907 0.0657907]; spread over eta 1e-2..1e-5: 5.84e-06
+5_2: homomorphism True; C = |Delta T|/d_H over n=6..96 at eta=1e-2: [0.16247078 0.16247078 0.16247078 0.16247078 0.16247078]; spread over eta 1e-2..1e-5: 1.96e-05
+identity |Delta T| = (|log R_eta|/4) d_H held in every case (assert)

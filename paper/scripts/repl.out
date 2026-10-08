@@ -1,0 +1,4 @@
+SEED k=4:  N = 8  D(exhaustive) = 6
+REPLICATED k=8 (q=2):  N = 64  (lemma predicts 64);  D(exhaustive over 6^7) = 24  (lemma predicts 24)
+ratio N/D = 64/24 = 2.666667   vs k/3 = 2.666667
+LEMMA HOLDS at q=2
