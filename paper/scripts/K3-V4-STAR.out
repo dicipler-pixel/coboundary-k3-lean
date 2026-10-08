@@ -1,0 +1,6 @@
+k=4: N=8 D=6 star costs=[6, 6, 6, 6] sum=24 (3N=24) all optimal: True
+k=5: N=10 D=6 star costs=[6, 6, 6, 6, 6] sum=30 (3N=30) all optimal: True
+k=6: N=36 D=18 star costs=[18, 18, 18, 18, 18, 18] sum=108 (3N=108) all optimal: True
+k=7: N=28 D=12 star costs=[12, 12, 12, 12, 12, 12, 12] sum=84 (3N=84) all optimal: True
+k=8: N=72 D=27 star costs=[27, 27, 27, 27, 27, 27, 27, 27] sum=216 (3N=216) all optimal: True
+k=8rep: N=64 D=24 star costs=[24, 24, 24, 24, 24, 24, 24, 24] sum=192 (3N=192) all optimal: True

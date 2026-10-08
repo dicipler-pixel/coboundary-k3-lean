@@ -1,0 +1,444 @@
+<title>k/3 Coboundary Mixer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: an instrument rack. Eye selector strip on top, one shared stage (the same canvas the film records), controls and live readouts beside it. Single dark look by design: black ground, glowing panels. */
+:root{
+  --ink:#05080f; --panel:#0b1322; --panel2:#101b2e; --rule:#1e2d47;
+  --fg:#d9e5f3; --muted:#8193ad; --cyan:#62c8ff; --gold:#e8b44f; --ember:#ff7a63; --mint:#6fe0b0;
+  --display:"Instrument Serif","Iowan Old Style","Palatino Linotype",Georgia,serif;
+  --body:"IBM Plex Sans","Segoe UI",system-ui,sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,"SFMono-Regular",Menlo,Consolas,monospace;
+  color-scheme:dark;
+}
+html,body{background:var(--ink);color:var(--fg)}
+body{font-family:var(--body);font-size:15px;line-height:1.5;padding-inline:clamp(16px,3vw,40px);padding-block:22px 40px}
+h1{font-family:var(--display);font-weight:400;font-size:clamp(30px,4.2vw,52px);line-height:1.05;margin:0;text-wrap:balance;letter-spacing:.005em}
+h1 i{color:var(--gold);font-style:italic}
+.top{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:12px 28px;margin-bottom:16px}
+.sub{color:var(--muted);max-width:62ch;margin:6px 0 0}
+.badge{font-family:var(--mono);font-size:12px;color:var(--muted);border:1px solid var(--rule);border-radius:999px;padding:4px 10px;white-space:nowrap}
+.eyes{display:flex;flex-wrap:wrap;gap:6px;margin:14px 0 14px}
+.eyes button{font-family:var(--mono);font-size:12.5px;letter-spacing:.03em;color:var(--muted);background:transparent;border:1px solid var(--rule);border-radius:6px;padding:6px 10px;cursor:pointer}
+.eyes button:hover{color:var(--fg);border-color:#33507a}
+.eyes button[aria-pressed="true"]{color:var(--ink);background:var(--cyan);border-color:var(--cyan)}
+.eyes button.mix[aria-pressed="false"]{color:var(--gold);border-color:#5a4520}
+.eyes button.mix[aria-pressed="true"]{background:var(--gold);border-color:var(--gold)}
+.rack{display:grid;grid-template-columns:minmax(0,1fr) 320px;gap:16px;align-items:start}
+@media (max-width:960px){.rack{grid-template-columns:minmax(0,1fr)}}
+.stage{background:radial-gradient(120% 90% at 70% 40%,#0d1a30 0%,var(--panel) 55%,#070c16 100%);border:1px solid var(--rule);border-radius:10px;overflow:hidden;min-width:0}
+canvas#stage{display:block;width:100%;height:auto;aspect-ratio:1220/834;max-width:100%}
+.side{display:flex;flex-direction:column;gap:12px;min-width:0}
+.box{background:var(--panel);border:1px solid var(--rule);border-radius:10px;padding:14px 14px 12px}
+.box h2{font-family:var(--mono);font-weight:500;font-size:11.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin:0 0 10px}
+.ctl{display:flex;flex-direction:column;gap:10px}
+.ctl label{display:flex;flex-direction:column;gap:4px;font-size:13px;color:var(--muted)}
+.ctl .row{display:flex;flex-wrap:wrap;gap:6px}
+select,input[type=text]{font-family:var(--mono);font-size:13px;color:var(--fg);background:var(--panel2);border:1px solid var(--rule);border-radius:6px;padding:6px 8px}
+input[type=range]{accent-color:var(--cyan);width:100%}
+.btn{font-family:var(--mono);font-size:12.5px;color:var(--fg);background:var(--panel2);border:1px solid #2a4064;border-radius:6px;padding:6px 10px;cursor:pointer}
+.btn:hover{border-color:var(--cyan)}
+.chk{flex-direction:row!important;align-items:center;gap:8px!important;color:var(--fg)!important}
+.read{font-family:var(--mono);font-size:13px;font-variant-numeric:tabular-nums;display:grid;grid-template-columns:auto 1fr;gap:4px 12px}
+.read dt{color:var(--muted)} .read dd{margin:0;text-align:right;color:var(--fg)}
+.read dd.ok{color:var(--mint)} .read dd.gold{color:var(--gold)} .read dd.warn{color:var(--ember)}
+.note{font-size:13.5px;color:var(--muted);margin:0;max-width:60ch}
+.note b{color:var(--fg);font-weight:600}
+.grade{font-family:var(--mono);font-size:11px;color:var(--ink);background:var(--mint);border-radius:4px;padding:1px 6px;margin-left:6px;vertical-align:1px}
+.grade.v{background:var(--cyan)} .grade.c{background:#9aa9c2}
+footer{margin-top:20px;color:var(--muted);font-size:12.5px;max-width:90ch}
+button:focus-visible,select:focus-visible,input:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+
+<div class="top">
+  <div>
+    <h1>The constant is <i>k/3</i></h1>
+    <p class="sub">The permutation coboundary constant of the complete complex, every result of the paper as its own live eye. Every number on the stage is computed in this page as you move the controls.</p>
+  </div>
+  <span class="badge">Jeromie Beasley · paper v7 · 8 Oct 2026</span>
+</div>
+
+<nav class="eyes" id="eyes" aria-label="Eyes"></nav>
+
+<div class="rack">
+  <div class="stage"><canvas id="stage" width="1220" height="834" aria-label="Live stage"></canvas></div>
+  <div class="side">
+    <div class="box"><h2 id="ctlTitle">Controls</h2><div class="ctl" id="ctl"></div></div>
+    <div class="box"><h2>Live readout</h2><dl class="read" id="read"></dl></div>
+    <div class="box"><h2>What this eye shows</h2><p class="note" id="note"></p></div>
+  </div>
+</div>
+<footer>Grades as in the paper: <span class="grade">T</span> proved, <span class="grade v">V</span> computed, <span class="grade c">C</span> cited. The torsion eye replays the shipped script's numbers; every other eye computes its values live.</footer>
+
+<script>
+"use strict";
+/* ============================== palette (mirrors the CSS tokens) ============================== */
+const C={ink:"#05080f",panel:"#0b1322",rule:"#1e2d47",fg:"#d9e5f3",muted:"#8193ad",cyan:"#62c8ff",gold:"#e8b44f",ember:"#ff7a63",mint:"#6fe0b0",dim:"#2a3d5c"};
+const FONT_D='"Instrument Serif",Georgia,serif', FONT_B='"IBM Plex Sans",system-ui,sans-serif', FONT_M='"IBM Plex Mono",ui-monospace,monospace';
+const W0=1220,H0=834;
+
+/* ============================== permutation algebra ============================== */
+const S3=[[0,1,2],[0,2,1],[1,0,2],[1,2,0],[2,0,1],[2,1,0]];
+const key=p=>p.join("");
+const IDX={}; S3.forEach((p,i)=>IDX[key(p)]=i);
+const comp=(p,q)=>q.map(i=>p[i]);                       // (p∘q)(i)=p(q(i))
+const inv=p=>{const r=[];p.forEach((x,i)=>r[x]=i);return r};
+const mvp=p=>p.reduce((s,x,i)=>s+(x!==i),0);
+const MT=S3.map(p=>S3.map(q=>IDX[key(comp(p,q))])), IV=S3.map(p=>IDX[key(inv(p))]), MV=S3.map(mvp);
+const ID=0, T01=IDX["102"], T12=IDX["021"], T02=IDX["210"];
+const GROUPS={S3:[0,1,2,3,4,5],F2:[0,T01],Z3:[0,IDX["120"],IDX["201"]]};
+const PNAME=i=>{const p=S3[i];if(i===0)return"id";const cyc=[],seen=[0,0,0];for(let s=0;s<3;s++){if(seen[s]||p[s]===s)continue;let c=[],x=s;while(!seen[x]){seen[x]=1;c.push(x);x=p[x]}cyc.push("("+c.join(" ")+")")}return cyc.join("")};
+const ECOL=i=>i===0?C.dim:(i===T01?C.ember:i===T12?C.cyan:i===T02?C.gold:"#c79bff");
+
+/* cochain on K_k: a[u][v] index into S3, a[v][u]=inverse */
+function cochain(k,edges){const a=[];for(let u=0;u<k;u++){a.push(new Array(k).fill(0))}for(const [u,v,p] of edges){const i=typeof p==="number"?p:IDX[p];a[u][v]=i;a[v][u]=IV[i]}return a}
+function Ncount(k,a){let n=0;for(let u=0;u<k;u++)for(let v=u+1;v<k;v++)for(let w=v+1;w<k;w++)n+=MV[MT[MT[a[u][v]][a[v][w]]][a[w][u]]];return n}
+const COST=[];for(let x=0;x<6;x++){COST.push([]);for(let e=0;e<6;e++){COST[x].push([]);for(let y=0;y<6;y++)COST[x][e].push(MV[MT[MT[x][e]][IV[y]]])}}
+function gaugeCost(k,a,b){let c=0;for(let u=0;u<k;u++)for(let v=u+1;v<k;v++)c+=COST[b[u]][a[u][v]][b[v]];return c}
+/* exhaustive gauge minimum, root fixed to the identity (a constant left factor only conjugates every edge term) */
+function Dmin(k,a,G){G=G||GROUPS.S3;const m=G.length,b=new Array(k).fill(0),d=new Array(k).fill(0);let best=1e9,arg=null;const tot=Math.pow(m,k-1);
+  for(let it=0;it<tot;it++){let c=0;for(let u=0;u<k&&c<best;u++)for(let v=u+1;v<k;v++)c+=COST[b[u]][a[u][v]][b[v]];if(c<best){best=c;arg=b.slice()}
+    let j=1;while(j<k){d[j]++;if(d[j]<m){b[j]=G[d[j]];break}d[j]=0;b[j]=G[0];j++}}
+  return {D:best,gauge:arg}}
+function starCosts(k,a){const out=[];for(let x=0;x<k;x++){const b=[];for(let u=0;u<k;u++)b.push(u===x?0:a[x][u]);out.push(gaugeCost(k,a,b))}return out}
+const tri=k=>k*(k-1)*(k-2)/6;
+
+/* witnesses of Appendix A (gauged form), plus the replicated K_8 */
+const WIT={
+ 4:{k:4,e:[[1,2,"021"],[1,3,"102"],[2,3,"210"]],ND:[8,6]},
+ 5:{k:5,e:[[0,1,"102"],[1,2,"102"],[2,3,"102"]],ND:[10,6]},
+ 6:{k:6,e:[[0,1,"120"],[1,3,"120"],[0,3,"201"],[0,4,"201"],[1,5,"201"],[4,5,"201"]],ND:[36,18]},
+ 7:{k:7,e:[[0,1,"102"],[0,3,"102"],[0,4,"102"],[1,2,"102"],[1,5,"102"],[2,3,"102"]],ND:[28,12]},
+ 8:{k:8,e:[[0,1,"021"],[0,7,"021"],[1,2,"021"],[2,5,"021"],[2,7,"021"],[1,3,"102"],[1,4,"102"],[1,6,"102"],[3,7,"102"],[0,4,"210"],[2,3,"210"],[2,4,"210"],[4,7,"201"]],ND:[72,27]},
+};
+const SEED=[[1,2,"021"],[1,3,"102"],[2,3,"210"]];
+function replicate(q){const k=4*q,e=[];const s={};SEED.forEach(([u,v,p])=>s[u+","+v]=p);
+  for(let u=0;u<k;u++)for(let v=u+1;v<k;v++){const cu=Math.floor(u/q),cv=Math.floor(v/q);if(cu!==cv&&s[cu+","+cv])e.push([u,v,s[cu+","+cv]])}return {k,e}}
+WIT["8r"]={...replicate(2),ND:[64,24]};
+
+/* ============================== linear algebra ============================== */
+function jacobi(A){const n=A.length,a=A.map(r=>r.slice());for(let sweep=0;sweep<80;sweep++){let off=0;for(let i=0;i<n;i++)for(let j=i+1;j<n;j++)off+=a[i][j]*a[i][j];if(off<1e-22)break;
+  for(let p=0;p<n;p++)for(let q=p+1;q<n;q++){if(Math.abs(a[p][q])<1e-15)continue;const th=(a[q][q]-a[p][p])/(2*a[p][q]),t=Math.sign(th||1)/(Math.abs(th)+Math.sqrt(th*th+1)),c=1/Math.sqrt(t*t+1),s=t*c;
+    for(let k=0;k<n;k++){const akp=a[k][p],akq=a[k][q];a[k][p]=c*akp-s*akq;a[k][q]=s*akp+c*akq}
+    for(let k=0;k<n;k++){const apk=a[p][k],aqk=a[q][k];a[p][k]=c*apk-s*aqk;a[q][k]=s*apk+c*aqk}}}
+  return a.map((r,i)=>r[i]).sort((x,y)=>x-y)}
+function jacobiV(A){const n=A.length,a=A.map(r=>r.slice()),V=A.map((r,i)=>r.map((_,j)=>i===j?1:0));for(let sweep=0;sweep<80;sweep++){let off=0;for(let i=0;i<n;i++)for(let j=i+1;j<n;j++)off+=a[i][j]*a[i][j];if(off<1e-24)break;
+  for(let p=0;p<n;p++)for(let q=p+1;q<n;q++){if(Math.abs(a[p][q])<1e-16)continue;const th=(a[q][q]-a[p][p])/(2*a[p][q]),t=Math.sign(th||1)/(Math.abs(th)+Math.sqrt(th*th+1)),c=1/Math.sqrt(t*t+1),s=t*c;
+    for(let k=0;k<n;k++){const akp=a[k][p],akq=a[k][q];a[k][p]=c*akp-s*akq;a[k][q]=s*akp+c*akq}
+    for(let k=0;k<n;k++){const apk=a[p][k],aqk=a[q][k];a[p][k]=c*apk-s*aqk;a[q][k]=s*apk+c*aqk}
+    for(let k=0;k<n;k++){const vkp=V[k][p],vkq=V[k][q];V[k][p]=c*vkp-s*vkq;V[k][q]=s*vkp+c*vkq}}}
+  return {vals:a.map((r,i)=>r[i]),vecs:V}}
+function gramOf(p){const n=p.length,G=[];for(let i=0;i<n;i++){G.push(new Array(n).fill(0));G[i][i]=1}for(let i=0;i<n;i++){if(p[i]!==i){G[p[i]][i]-=.5;G[i][p[i]]-=.5}else{G[i][i]-=1}}return G}
+function cycles(p){const n=p.length,seen=new Array(n).fill(0),out=[];for(let s=0;s<n;s++){if(seen[s])continue;const c=[];let x=s;while(!seen[x]){seen[x]=1;c.push(x);x=p[x]}out.push(c)}return out}
+const h2=x=>(x<=0||x>=1)?0:-(x*Math.log(x)+(1-x)*Math.log(1-x));
+function rngf(seed){let s=seed>>>0||1;return()=>{s^=s<<13;s>>>=0;s^=s>>>17;s^=s<<5;s>>>=0;return s/4294967296}}
+function randPerm(n,r){const p=[...Array(n).keys()];for(let i=n-1;i>0;i--){const j=Math.floor(r()*(i+1));[p[i],p[j]]=[p[j],p[i]]}return p}
+function permFromCycles(n,lens){const p=[...Array(n).keys()];let s=0;for(const L of lens){for(let i=0;i<L;i++)p[s+i]=s+(i+1)%L;s+=L}return p}
+const ZETA3=1.2020569031595942,ZETA5=1.0369277551433699;
+function deficitExact(l){const step=l%2?l:l/2;let s=0;for(let t=1;t<4000;t++){const m=step*t;s+=1/(m*(4*m*m-1))}return s}
+function deficitDirect(l){let S=0;for(let j=0;j<l;j++){const x=Math.sin(Math.PI*j/l)**2;S+=h2(x)}return 2*Math.LN2-1-S/l}
+
+/* ============================== drawing helpers ============================== */
+const cv=document.getElementById("stage"),X=cv.getContext("2d");
+function clear(ctx){ctx.save();ctx.setTransform(1,0,0,1,0,0);const g=ctx.createRadialGradient(cv.width*.66,cv.height*.4,40,cv.width*.6,cv.height*.45,cv.width*.8);g.addColorStop(0,"#0d1a30");g.addColorStop(.55,"#0a1120");g.addColorStop(1,"#05080f");ctx.fillStyle=g;ctx.fillRect(0,0,cv.width,cv.height);ctx.restore()}
+function glow(ctx,col,blur){ctx.shadowColor=col;ctx.shadowBlur=blur}
+function noglow(ctx){ctx.shadowBlur=0}
+function txt(ctx,s,x,y,o={}){ctx.save();ctx.font=o.font||`${o.size||22}px ${o.face||FONT_B}`;ctx.fillStyle=o.col||C.fg;ctx.textAlign=o.align||"left";ctx.textBaseline=o.base||"alphabetic";if(o.glow){glow(ctx,o.col||C.fg,o.glow)}ctx.globalAlpha=o.alpha==null?1:o.alpha;ctx.fillText(s,x,y);ctx.restore()}
+function title(ctx,s,sub,a=1){txt(ctx,s,44,62,{font:`44px ${FONT_D}`,col:C.fg,alpha:a});if(sub)txt(ctx,sub,46,94,{size:19,col:C.muted,alpha:a})}
+function hero(ctx,s,x,y,size,col,a=1){txt(ctx,s,x,y,{font:`italic ${size}px ${FONT_D}`,col:col||C.gold,glow:18,alpha:a,align:"center"})}
+function line(ctx,x1,y1,x2,y2,col,w,a=1){ctx.save();ctx.globalAlpha=a;ctx.strokeStyle=col;ctx.lineWidth=w;ctx.beginPath();ctx.moveTo(x1,y1);ctx.lineTo(x2,y2);ctx.stroke();ctx.restore()}
+function node(ctx,x,y,r,label,col,a=1){ctx.save();ctx.globalAlpha=a;glow(ctx,col||C.cyan,14);ctx.fillStyle="#08101d";ctx.strokeStyle=col||C.cyan;ctx.lineWidth=2;ctx.beginPath();ctx.arc(x,y,r,0,7);ctx.fill();ctx.stroke();noglow(ctx);if(label!=null){ctx.fillStyle=C.fg;ctx.font=`${Math.round(r*.95)}px ${FONT_M}`;ctx.textAlign="center";ctx.textBaseline="middle";ctx.fillText(label,x,y+1)}ctx.restore()}
+function ease(u){u=Math.min(1,Math.max(0,u));return u*u*(3-2*u)}
+function circLayout(k,cx,cy,R,rot=-Math.PI/2){return [...Array(k).keys()].map(i=>[cx+R*Math.cos(rot+2*Math.PI*i/k),cy+R*Math.sin(rot+2*Math.PI*i/k)])}
+function drawComplex(ctx,k,a,P,o={}){const t=o.t||0;
+  for(let u=0;u<k;u++)for(let v=u+1;v<k;v++){const e=a[u][v],hi=o.hi&&o.hi(u,v);ctx.save();
+    if(e===0){line(ctx,...P[u],...P[v],hi?"#3c5a86":C.dim,hi?2:1,o.dimA==null?.7:o.dimA)}else{glow(ctx,ECOL(e),hi?22:12);line(ctx,...P[u],...P[v],ECOL(e),hi?5:3.2,1)}
+    ctx.restore()}
+  P.forEach(([x,y],i)=>node(ctx,x,y,o.r||17,o.labels===false?null:String(i),o.ncol?o.ncol(i):C.cyan))}
+function bars(ctx,x,y,w,h,vals,max,cols,labels,o={}){const n=vals.length,bw=w/n*.62;for(let i=0;i<n;i++){const bh=h*Math.min(1,vals[i]/max),bx=x+w/n*(i+.19);ctx.save();glow(ctx,cols[i%cols.length],14);ctx.fillStyle=cols[i%cols.length];ctx.fillRect(bx,y+h-bh,bw,bh);ctx.restore();if(labels)txt(ctx,labels[i],bx+bw/2,y+h+24,{size:o.ls||17,col:C.muted,align:"center",face:FONT_M});if(o.vals)txt(ctx,o.vals[i],bx+bw/2,y+h-bh-10,{size:o.vs||18,col:C.fg,align:"center",face:FONT_M})}}
+function axes(ctx,x,y,w,h,xr,yr,o={}){ctx.save();ctx.strokeStyle=C.rule;ctx.lineWidth=1;ctx.strokeRect(x,y,w,h);ctx.font=`15px ${FONT_M}`;ctx.fillStyle=C.muted;
+  (o.xt||[]).forEach(v=>{const px=x+(o.xlog?(Math.log(v)-Math.log(xr[0]))/(Math.log(xr[1])-Math.log(xr[0])):(v-xr[0])/(xr[1]-xr[0]))*w;ctx.textAlign="center";ctx.fillText(String(v),px,y+h+22);line(ctx,px,y+h,px,y+h+5,C.muted,1)});
+  (o.yt||[]).forEach(v=>{const py=y+h-(v-yr[0])/(yr[1]-yr[0])*h;ctx.textAlign="right";ctx.fillText(typeof v==="number"?(+v.toFixed(3)).toString():v,x-8,py+5);line(ctx,x,py,x+w,py,"#13213a",1)});
+  if(o.xl)txt(ctx,o.xl,x+w/2,y+h+48,{size:17,col:C.muted,align:"center"});if(o.yl){ctx.save();ctx.translate(x-58,y+h/2);ctx.rotate(-Math.PI/2);txt(ctx,o.yl,0,0,{size:17,col:C.muted,align:"center"});ctx.restore()}ctx.restore();
+  return {X:v=>x+(o.xlog?(Math.log(v)-Math.log(xr[0]))/(Math.log(xr[1])-Math.log(xr[0])):(v-xr[0])/(xr[1]-xr[0]))*w,Y:v=>y+h-(v-yr[0])/(yr[1]-yr[0])*h}}
+
+/* ============================== the eyes ============================== */
+const EYES=[];
+function eye(o){EYES.push(o)}
+
+/* ---- 1. the seed on K4 ---- */
+eye({id:"seed",name:"K₄ seed",title:"The four-vertex seed",
+ note:"<b>Three different transpositions on one triangle.</b> Every triangle of K₄ then carries a transposition, so N = 8 moved points; the cheapest repair costs D = 6, so N/D = 4/3 = k/3, exactly the lower bound. The cyclic group gives 3/2 and the binary group gives 2: the bound needs the non-abelian group. <span class=grade>T</span>",
+ state:{grp:"S3"},
+ controls(st){return [sel("Coefficient group","grp",[["S3","Sym(3): three distinct transpositions"],["Z3","Z/3: two 3-cycles"],["F2","F₂: one transposition"]])]},
+ compute(st){let e;if(st.grp==="S3")e=SEED;else if(st.grp==="Z3")e=[[1,2,"120"],[1,3,"201"]];else e=[[2,3,"102"]];const a=cochain(4,e),N=Ncount(4,a),G=GROUPS[st.grp],D=Dmin(4,a,G).D;return {a,N,D,e}},
+ read(st,r){return [["N (moved points)",r.N],["D (gauge minimum)",r.D],["N/D",frac(r.N,r.D),r.N*3===4*r.D?"ok":"warn"],["lower bound k/3","4/3","gold"]]},
+ draw(ctx,st,t,r){title(ctx,"The four-vertex seed","three distinct transpositions on one triangle");const P=[[610,210],[360,640],[860,640],[610,470]];
+  const tris=[[0,1,2],[0,1,3],[0,2,3],[1,2,3]];const ph=(t*0.6)%4,ti=Math.floor(ph),f=ph-ti;
+  const T=tris[ti];ctx.save();ctx.globalAlpha=.16+.14*Math.sin(Math.PI*f);ctx.fillStyle=C.cyan;ctx.beginPath();T.forEach((v,i)=>i?ctx.lineTo(...P[v]):ctx.moveTo(...P[v]));ctx.fill();ctx.restore();
+  drawComplex(ctx,4,r.a,P,{r:22});
+  const h=MT[MT[r.a[T[0]][T[1]]][r.a[T[1]][T[2]]]][r.a[T[2]][T[0]]];txt(ctx,`triangle ${T.join("")}: holonomy ${PNAME(h)}  ·  moves ${MV[h]}`,610,770,{size:21,col:C.fg,align:"center",face:FONT_M});
+  hero(ctx,`N/D = ${r.N}/${r.D} = ${frac(r.N,r.D)}`,1000,250,46,r.N*3===4*r.D?C.gold:C.ember)}
+});
+
+/* ---- 2. the incidence bound ---- */
+eye({id:"bound",name:"Star bound",title:"The star-gauge bound",
+ note:"<b>Gauge the star at one vertex x to the identity.</b> Every other edge then carries exactly the holonomy of the one triangle it spans with x. Summing over all k choices of x counts every triangle three times: the star costs add to 3N, so the cheapest repair is at most 3N/k and N/D ≥ k/3. A cochain meets k/3 exactly when every star gauge is optimal. <span class=grade>T</span>",
+ state:{k:"6",x:0},
+ controls(st){return [sel("Witness","k",[["4","k = 4"],["5","k = 5"],["6","k = 6"],["7","k = 7"],["8","k = 8 (72/27)"],["8r","k = 8 (replicated, 64/24)"]]),range("Star vertex x","x",0,7,1)]},
+ compute(st){const w=WIT[st.k],k=w.k,a=cochain(k,w.e),N=Ncount(k,a),st_=starCosts(k,a);return {k,a,N,stars:st_,D:w.ND[1]}},
+ read(st,r){const s=r.stars.reduce((x,y)=>x+y,0);return [["N",r.N],["Σ star costs",s],["3N",3*r.N,s===3*r.N?"ok":"warn"],["mean star cost",frac(s,r.k)],["D (paper)",r.D],["all stars optimal",r.stars.every(c=>c===r.D)?"yes":"no",r.stars.every(c=>c===r.D)?"ok":"warn"]]},
+ draw(ctx,st,t,r){title(ctx,"The star-gauge bound","every star costs exactly 3N/k on a witness");const k=r.k,x=Math.min(+st.x,k-1);const P=circLayout(k,370,450,250);
+  drawComplex(ctx,k,r.a,P,{hi:(u,v)=>u===x||v===x,ncol:i=>i===x?C.gold:C.cyan});
+  bars(ctx,700,240,450,360,r.stars,Math.max(...r.stars)*1.25,[C.cyan],r.stars.map((_,i)=>"x="+i),{vals:r.stars.map(String)});
+  ctx.save();const yD=240+360-360*r.D/(Math.max(...r.stars)*1.25);line(ctx,700,yD,1150,yD,C.gold,2);ctx.restore();txt(ctx,"D",1160,yD+6,{size:20,col:C.gold,face:FONT_M});
+  hero(ctx,"Σₓ cost(βₓ) = 3N",925,720,40)}
+});
+
+/* ---- 3. workbench ---- */
+eye({id:"bench",name:"Workbench",title:"Cochain workbench",
+ note:"<b>Any cochain, exhaustive repair.</b> Load a witness or draw a random cochain; the page searches every gauge (6^(k−1) of them, root fixed) and reports the true minimum D. The ratio never goes below k/3, and the witnesses sit exactly on it. <span class=grade>V</span>",
+ state:{k:"5",grp:"S3",mode:"witness",seed:7},
+ controls(st){return [sel("k","k",[["4","4"],["5","5"],["6","6"],["7","7"],["8","8"]]),sel("Cochain","mode",[["witness","the paper's witness"],["random","random"]]),sel("Random values in","grp",[["S3","Sym(3)"],["Z3","Z/3"],["F2","F₂"]]),button("New random cochain",st=>{st.seed++;st.mode="random"})]},
+ compute(st){const k=+st.k;let a;if(st.mode==="witness"){a=cochain(k,WIT[k].e)}else{const r=rngf(st.seed*7919+k),G=GROUPS[st.grp],e=[];for(let u=0;u<k;u++)for(let v=u+1;v<k;v++){if(r()<.45)e.push([u,v,G[Math.floor(r()*G.length)]])}a=cochain(k,e)}
+  const N=Ncount(k,a),res=Dmin(k,a);return {k,a,N,D:res.D,g:res.gauge}},
+ read(st,r){const ok=r.D===0||3*r.N>=r.k*r.D;return [["edges with a non-identity value",countE(r)],["N",r.N],["D (exhaustive)",r.D],["N/D",r.D?frac(r.N,r.D):"coboundary"],["k/3",frac(r.k,3),"gold"],["N/D ≥ k/3",ok?"holds":"FAILS",ok?"ok":"warn"]]},
+ draw(ctx,st,t,r){title(ctx,"Cochain workbench",`K${sub(r.k)}, ${st.mode==="witness"?"the paper's witness":"a random cochain"}`);const P=circLayout(r.k,400,460,270);drawComplex(ctx,r.k,r.a,P,{r:18});
+  const ax=axes(ctx,800,200,340,420,[0,1],[0,Math.max(4,r.k/3*1.6)],{yt:[0,1,2,3],yl:"ratio"});
+  const yb=ax.Y(r.k/3);line(ctx,800,yb,1140,yb,C.gold,2);txt(ctx,"k/3",1146,yb+6,{size:18,col:C.gold,face:FONT_M});
+  if(r.D){const yr=ax.Y(Math.min(r.N/r.D,Math.max(4,r.k/3*1.6)));ctx.save();glow(ctx,C.cyan,16);ctx.fillStyle=C.cyan;ctx.fillRect(900,yr,140,620-yr);ctx.restore();txt(ctx,frac(r.N,r.D),970,yr-12,{size:24,col:C.fg,align:"center",face:FONT_M})}
+  else txt(ctx,"a coboundary: N = D = 0",970,420,{size:20,col:C.muted,align:"center"});
+  legendS3(ctx,60,770)}
+});
+
+/* ---- 4. replication ---- */
+eye({id:"rep",name:"Replication",title:"Balanced replication",
+ note:"<b>Blow each vertex up into a cluster of q.</b> Identity inside a cluster, the seed value between clusters. Triangles across three clusters copy the seed, so N grows by q³; a finite count over the q^k sections shows the repair grows by exactly q². The ratio grows by q, so 4q/3 = k/3 at every multiple of four, and every power of two. <span class=grade>T</span>",
+ state:{q:2},
+ controls(st){return [range("q (cluster size)","q",1,4,1)]},
+ compute(st){const q=+st.q,R=replicate(q),a=cochain(R.k,R.e),N=Ncount(R.k,a);let D=6*q*q,how="lemma";if(q<=2){D=Dmin(R.k,a).D;how="exhaustive"}return {q,k:R.k,a,N,D,how}},
+ read(st,r){return [["k = 4q",r.k],["N (counted)",r.N],["8q³",8*r.q**3,r.N===8*r.q**3?"ok":"warn"],["D ("+r.how+")",r.D],["6q²",6*r.q**2,r.D===6*r.q**2?"ok":"warn"],["N/D",frac(r.N,r.D),"gold"]]},
+ draw(ctx,st,t,r){title(ctx,"Balanced replication",`q = ${r.q}: K₄ becomes K${sub(r.k)}`);const q=r.q,base=[[430,210],[200,640],[660,640],[430,470]];const P=[];
+  for(let u=0;u<r.k;u++){const c=Math.floor(u/q),j=u%q,ang=2*Math.PI*j/q+t*.2,rad=q===1?0:26+6*q;P.push([base[c][0]+rad*Math.cos(ang),base[c][1]+rad*Math.sin(ang)])}
+  drawComplex(ctx,r.k,r.a,P,{r:q>2?9:13,labels:q<=2,dimA:.35});
+  const ax=axes(ctx,820,190,330,420,[0.5,4.5],[0,6],{xt:[1,2,3,4],yt:[0,2,4,6],xl:"q",yl:"N/D"});
+  ctx.save();ctx.strokeStyle=C.gold;ctx.lineWidth=2;ctx.beginPath();for(let qq=1;qq<=4;qq++){const px=ax.X(qq),py=ax.Y(4*qq/3);qq===1?ctx.moveTo(px,py):ctx.lineTo(px,py)}ctx.stroke();ctx.restore();
+  for(let qq=1;qq<=4;qq++)node(ctx,ax.X(qq),ax.Y(4*qq/3),qq===q?11:7,null,qq===q?C.gold:C.cyan);
+  hero(ctx,`${r.N}/${r.D} = ${frac(r.N,r.D)}`,985,700,40)}
+});
+
+/* ---- 5. ladder ---- */
+eye({id:"ladder",name:"Ladder",title:"The constant at every k",
+ note:"<b>Permutations sit on the bound everywhere; F₂ does not at the powers of two.</b> F₂ equals k/3 except at powers of two, where Kozlov proves 2 at k=4, 20/7 at k=8, and a bracket of width 4k/(3(k²−8)) above k/3 beyond that, whose strictness is open. <span class=grade>T</span><span class=\"grade c\">C</span>",
+ state:{kmax:16},
+ controls(st){return [range("show up to k","kmax",8,32,4)]},
+ compute(st){return {kmax:+st.kmax}},
+ read(st,r){return [["k=4: F₂","2","warn"],["k=8: F₂","20/7","warn"],["k=16: F₂ ≤","16/3 + 8/93"],["Sym, every k","k/3","ok"]]},
+ draw(ctx,st,t,r){title(ctx,"The constant at every k","permutations on the bound, F₂ above it at powers of two");const K=r.kmax;const ax=axes(ctx,140,170,960,520,[3.5,K+.5],[1,K/3+1.2],{xt:[...Array(K-3).keys()].map(i=>i+4).filter(v=>K<=16||v%4===0),yt:[...Array(Math.floor(K/3)+2).keys()].map(i=>i+1).filter(v=>v<=K/3+1.2),xl:"vertices k",yl:"h₁ (counting)"});
+  const prog=ease((t%9)/4);ctx.save();glow(ctx,C.cyan,10);ctx.strokeStyle=C.cyan;ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(ax.X(3.6),ax.Y(1.2));ctx.lineTo(ax.X(3.6+(K-3.1)*prog),ax.Y((3.6+(K-3.1)*prog)/3));ctx.stroke();ctx.restore();
+  for(let k=4;k<=K;k++){if(k>3.6+(K-3.1)*prog)break;node(ctx,ax.X(k),ax.Y(k/3),k<=8?8:6,null,C.cyan);
+    const pw=(k&(k-1))===0;let f2=k/3;if(k===4)f2=2;if(k===8)f2=20/7;
+    ctx.save();glow(ctx,C.ember,8);ctx.strokeStyle=C.ember;ctx.lineWidth=2;
+    if(pw&&k>=16){const lo=ax.Y(k/3),hi=ax.Y(k/3+4*k/(3*(k*k-8)));ctx.beginPath();ctx.moveTo(ax.X(k)+14,lo);ctx.lineTo(ax.X(k)+14,hi-6);ctx.stroke()}
+    else{ctx.strokeRect(ax.X(k)-6,ax.Y(f2)-6,12,12)}ctx.restore()}
+  txt(ctx,"F₂ = 2",ax.X(4)-4,ax.Y(2)-24,{size:19,col:C.ember,face:FONT_M});txt(ctx,"F₂ = 20/7",ax.X(8)-30,ax.Y(20/7)-44,{size:19,col:C.ember,face:FONT_M});
+  hero(ctx,"h₁(Kₖ, Sym) = k/3",870,260,44)}
+});
+
+/* ---- 6. parity retraction ---- */
+eye({id:"parity",name:"Parity",title:"The parity retraction",
+ note:"<b>Why bigger gauges cannot help a binary cochain.</b> Send each element of Sym(3) to its sign: even elements to the identity, odd ones to the transposition t. This is a homomorphism, it fixes {id, t}, and it never raises the moved-point count. So any Sym(3) repair of an {id, t}-valued cochain retracts to a binary repair that costs no more, and Kozlov's binary witnesses keep their value k/3. <span class=grade>T</span>",
+ state:{k:"5",seed:3},
+ controls(st){return [sel("Test on random binary cochains on","k",[["4","K₄"],["5","K₅"],["6","K₆"]]),button("New random binary cochain",st=>st.seed++)]},
+ compute(st){const k=+st.k,r=rngf(st.seed*31+k),e=[];for(let u=0;u<k;u++)for(let v=u+1;v<k;v++)if(r()<.5)e.push([u,v,T01]);const a=cochain(k,e);return {k,Ds3:Dmin(k,a,GROUPS.S3).D,Dh:Dmin(k,a,GROUPS.F2).D,N:Ncount(k,a)}},
+ read(st,r){return [["N",r.N],["Sym(3) gauge minimum",r.Ds3],["{id,t} gauge minimum",r.Dh],["equal",r.Ds3===r.Dh?"yes":"no",r.Ds3===r.Dh?"ok":"warn"]]},
+ draw(ctx,st,t,r){title(ctx,"The parity retraction","r(g) = t^parity(g): a homomorphism that never costs more");const L=S3.map((p,i)=>[300,190+i*95]),R=[[880,330],[880,620]];
+  const tgt=i=>MV[i]===2?1:0;
+  S3.forEach((p,i)=>{const a=ease(t*.7-i*.35);const [x,y]=L[i],[x2,y2]=R[tgt(i)];ctx.save();glow(ctx,tgt(i)?C.ember:C.mint,10);line(ctx,x+46,y,x+46+(x2-46-x-46)*a,y+(y2-y)*a,tgt(i)?C.ember:C.mint,2.4,.85);ctx.restore();
+    node(ctx,x,y,42,null,tgt(i)?C.ember:C.mint);txt(ctx,PNAME(i),x,y+6,{size:16,col:C.fg,align:"center",face:FONT_M});txt(ctx,`moves ${MV[i]}`,x-58,y+6,{size:16,col:C.muted,align:"right",face:FONT_M})});
+  node(ctx,...R[0],40,null,C.mint);txt(ctx,"id",R[0][0],R[0][1]+8,{size:24,col:C.fg,align:"center",face:FONT_M});txt(ctx,"cost 0",R[0][0]+60,R[0][1]+8,{size:18,col:C.muted,face:FONT_M});
+  node(ctx,...R[1],40,null,C.ember);txt(ctx,"t",R[1][0],R[1][1]+8,{size:24,col:C.fg,align:"center",face:FONT_M});txt(ctx,"cost 2",R[1][0]+60,R[1][1]+8,{size:18,col:C.muted,face:FONT_M});
+  txt(ctx,"even → id",300,140,{size:18,col:C.mint,align:"center"});txt(ctx,"odd → t",470,140,{size:18,col:C.ember,align:"center"});
+  hero(ctx,`K${sub(r.k)} test: Sym(3) min ${r.Ds3} = binary min ${r.Dh}`,880,790,26,r.Ds3===r.Dh?C.gold:C.ember)}
+});
+
+/* ---- 7. cross-degree ---- */
+eye({id:"cross",name:"Cross-degree",title:"Every comparison degree",
+ note:"<b>Chapman–Lubotzky also allow the repair to use permutations of a different degree.</b> A degree-3 permutation agrees with a degree-2 one on at most 2 of 3 points and with a degree-m one on at most 3 of m, so every edge pays a baseline. With exact enumeration at m = 2, 3, 4 on the seed, every case is covered, and the constant is k/3 in both conventions. <span class=grade>T</span><span class=\"grade v\">V</span>",
+ state:{m:"2"},
+ controls(st){return [sel("Comparison degree m","m",[["2","m = 2"],["3","m = 3"],["4","m = 4"],["5","m = 5"],["6","m = 6"],["8","m = 8"]])]},
+ compute(st){const m=+st.m;let best=null;if(m<=4){best=crossMin(m)}return {m,best,base:6*(m===2?1/3:Math.max(0,1-3/m))}},
+ read(st,r){return [["comparison degree",r.m],["per-edge baseline",r.m===2?"1/3":r.m===3?"0":`1 − 3/${r.m}`],["seed minimum (degree 3)","2","gold"],[r.best!=null?"exact minimum":"baseline × 6 edges",r.best!=null?r.best.str:r.base.toFixed(3),(r.best!=null?r.best.v:r.base)>=2-1e-9?"ok":"warn"]]},
+ draw(ctx,st,t,r){title(ctx,"Every comparison degree","the seed's repair cannot get cheaper in another degree");const ms=[2,3,4,5,6,8];const ax=axes(ctx,150,190,920,480,[1.5,8.5],[0,4.2],{xt:ms,yt:[0,1,2,3,4],xl:"comparison degree m",yl:"cheapest repair (edge units)"});
+  line(ctx,150,ax.Y(2),1070,ax.Y(2),C.gold,2);txt(ctx,"degree 3: 2",1078,ax.Y(2)+6,{size:17,col:C.gold,face:FONT_M});
+  const ex={2:10/3,3:2,4:3};ms.forEach((m,i)=>{const a=ease(t*.8-i*.3);const v=ex[m]!=null?ex[m]:6*(1-3/m);const y=ax.Y(v*a);ctx.save();glow(ctx,m===+st.m?C.gold:C.cyan,14);ctx.fillStyle=m===+st.m?C.gold:C.cyan;ctx.fillRect(ax.X(m)-26,y,52,ax.Y(0)-y);ctx.restore();
+   txt(ctx,ex[m]!=null?(m===2?"10/3":String(ex[m])):"≥ "+(6*(1-3/m)).toFixed(2),ax.X(m),y-10,{size:17,col:C.fg,align:"center",face:FONT_M});txt(ctx,ex[m]!=null?"exact":"baseline",ax.X(m),ax.Y(0)-10,{size:14,col:C.ink,align:"center",face:FONT_M})});
+  hero(ctx,"h₁ᵉʳʳ = h₁ˢᵃᵐᵉ = k/3",870,775,34)}
+});
+function crossMin(m){const seed=cochain(4,SEED);const perms=permsOf(m);const d=(s,tau)=>{let a=0;for(let j=0;j<Math.min(3,m);j++)if(s[j]===tau[j])a++;return 1-a/Math.max(3,m)};
+  let best=1e9;const id=[...Array(m).keys()];for(const b1 of perms)for(const b2 of perms)for(const b3 of perms){const b=[id,b1,b2,b3];let c=0;for(let u=0;u<4;u++)for(let v=u+1;v<4;v++)c+=d(S3[seed[u][v]],comp(inv(b[u]),b[v]));if(c<best-1e-12)best=c}
+  const den=Math.max(3,m)*1;const num=Math.round(best*den);return {v:best,str:frac(num,den)}}
+function permsOf(m){const out=[];const rec=(p,used)=>{if(p.length===m){out.push(p.slice());return}for(let i=0;i<m;i++)if(!used[i]){used[i]=1;p.push(i);rec(p,used);p.pop();used[i]=0}};rec([],[]);return out}
+
+/* ---- 8. Gram / cycle type ---- */
+eye({id:"gram",name:"Gram",title:"The displacement Gram",
+ note:"<b>G = I − ½(U + U*) is half the Laplacian of the cycle graph.</b> An ℓ-cycle contributes eigenvalues 2 sin²(πj/ℓ). The traces of Chebyshev polynomials of the spectrum give Tr Uʳ, and Möbius inversion gives back the number of cycles of every length: the spectrum determines the cycle type, and this eye reconstructs it from the eigenvalues alone. <span class=grade>T</span>",
+ state:{type:"5,3,2,2"},
+ controls(st){return [text("Cycle type (lengths, comma separated)","type"),button("Random cycle type",st=>{const r=rngf(Date.now()%100000);const L=[];let n=0;while(n<14){const l=1+Math.floor(r()*6);L.push(l);n+=l}st.type=L.join(",")})]},
+ compute(st){const lens=st.type.split(/[ ,]+/).map(Number).filter(x=>x>=1&&x<=24).slice(0,10);const n=lens.reduce((a,b)=>a+b,0);const p=permFromCycles(n,lens);const ev=jacobi(gramOf(p));
+  const F=r=>ev.reduce((s,l)=>s+Math.cos(r*Math.acos(Math.max(-1,Math.min(1,1-l)))),0);const mu=n_=>{let r=1,x=n_;for(let d=2;d*d<=x;d++){if(x%d===0){x/=d;if(x%d===0)return 0;r=-r}}if(x>1)r=-r;return r};
+  const rec={};for(let l=1;l<=n;l++){let s=0;for(let d=1;d<=l;d++)if(l%d===0)s+=mu(l/d)*F(d);const a=Math.round(s/l);if(a)rec[l]=a}
+  const want={};lens.forEach(l=>want[l]=(want[l]||0)+1);return {lens,n,p,ev,rec,want}},
+ read(st,r){const ok=JSON.stringify(r.rec)===JSON.stringify(sortObj(r.want));return [["points",r.n],["moved points",r.lens.filter(l=>l>1).reduce((a,b)=>a+b,0)],["Tr G",r.ev.reduce((a,b)=>a+b,0).toFixed(6)],["recovered cycle type",Object.entries(r.rec).map(([l,c])=>c>1?`${l}×${c}`:l).join(" · ")],["matches",ok?"yes":"no",ok?"ok":"warn"]]},
+ draw(ctx,st,t,r){title(ctx,"The displacement Gram","half the Laplacian of the cycle graph");let x0=80;const cyc=cycles(r.p);const scale=Math.min(1,560/(r.n*30+cyc.length*30));
+  cyc.forEach((c,ci)=>{const R=Math.max(26,c.length*13)*scale+10,cx=x0+R+10,cy=300;x0=cx+R+28;const P=circLayout(c.length,cx,cy,c.length===1?0:R,-Math.PI/2+t*.3);const col=[C.cyan,C.gold,C.ember,C.mint,"#c79bff"][ci%5];
+   for(let i=0;i<c.length&&c.length>1;i++){ctx.save();glow(ctx,col,10);line(ctx,...P[i],...P[(i+1)%c.length],col,c.length===2?5:2.5);ctx.restore()}P.forEach(([x,y])=>node(ctx,x,y,8,null,col))});
+  const ax=axes(ctx,110,470,1000,240,[0,r.n+1],[0,2.1],{yt:[0,1,2],xl:"eigenvalue index",yl:"λ(G)"});
+  r.ev.forEach((l,i)=>{const a=ease(t*1.2-i*.05);const x=ax.X(i+1),y=ax.Y(l*a);ctx.save();glow(ctx,C.cyan,8);line(ctx,x,ax.Y(0),x,y,C.cyan,3);ctx.restore();node(ctx,x,y,5,null,l<1e-9?C.gold:C.cyan)});
+  txt(ctx,"recovered from the spectrum: "+Object.entries(r.rec).map(([l,c])=>c>1?`${c}×(${l})`:`(${l})`).join(" "),610,790,{size:21,col:C.gold,align:"center",face:FONT_M})}
+});
+function sortObj(o){const r={};Object.keys(o).map(Number).sort((a,b)=>a-b).forEach(k=>r[k]=o[k]);return r}
+
+/* ---- 9. Schreier ---- */
+eye({id:"schreier",name:"Schreier",title:"Families: the Schreier Laplacian",
+ note:"<b>Add the Grams of several permutations.</b> The sum is half the Laplacian of the Schreier graph of the action. Its zero eigenvalues are exactly the vectors constant on orbits, one per orbit, and its first positive eigenvalue is the spectral gap: how well the action expands. That gap is what property (T) forces in Kun's theorem. <span class=grade>T</span>",
+ state:{preset:"two",seed:2},
+ controls(st){return [sel("Family","preset",[["two","two orbits (the paper's figure)"],["one","one orbit"],["random","random sparse family"]]),button("New random family",st=>{st.seed++;st.preset="random"})]},
+ compute(st){let n=8,ps;if(st.preset==="two")ps=[[1,2,0,3,5,4,6,7],[0,2,1,4,3,6,7,5]];else if(st.preset==="one")ps=[[1,2,0,3,5,4,6,7],[0,2,1,4,3,6,7,5].map((x,i)=>i===2?3:i===3?2:x)];
+  else{const r=rngf(st.seed*97);n=10;ps=[0,1].map(()=>{const p=[...Array(n).keys()];for(let s=0;s<3;s++){const i=Math.floor(r()*n),j=Math.floor(r()*n);[p[i],p[j]]=[p[j],p[i]]}return p})}
+  if(st.preset==="one"){ps[1]=[0,2,3,4,1,6,7,5]}  // (1 2 3 4)(5 6 7): joins the two orbits
+  const G=[];for(let i=0;i<n;i++)G.push(new Array(n).fill(0));ps.forEach(p=>{const g=gramOf(p);for(let i=0;i<n;i++)for(let j=0;j<n;j++)G[i][j]+=g[i][j]});const ev=jacobi(G);
+  const par=[...Array(n).keys()];const f=x=>{while(par[x]!==x){par[x]=par[par[x]];x=par[x]}return x};ps.forEach(p=>p.forEach((y,x)=>{par[f(x)]=f(y)}));const orb={};for(let i=0;i<n;i++)(orb[f(i)]=orb[f(i)]||[]).push(i);
+  return {n,ps,ev,orbits:Object.values(orb)}},
+ read(st,r){const z=r.ev.filter(x=>Math.abs(x)<1e-9).length,gap=r.ev.find(x=>x>1e-9);return [["points",r.n],["orbits",r.orbits.length],["zero eigenvalues",z,z===r.orbits.length?"ok":"warn"],["spectral gap",gap?gap.toFixed(4):"—","gold"]]},
+ draw(ctx,st,t,r){title(ctx,"Families: the Schreier Laplacian","zeros count orbits; the first positive eigenvalue is the gap");const pos={};let cx=150;r.orbits.forEach(o=>{const R=o.length===1?0:Math.max(60,o.length*22);const P=circLayout(o.length,cx+R,360,R,-Math.PI/2+t*.15);o.forEach((v,i)=>pos[v]=P[i]);cx+=2*R+90});
+  const cols=[C.cyan,C.ember,C.gold];r.ps.forEach((p,pi)=>p.forEach((y,x)=>{if(y!==x&&(p[y]!==x||x<y)){ctx.save();glow(ctx,cols[pi],10);const [x1,y1]=pos[x],[x2,y2]=pos[y];const mx=(x1+x2)/2+(pi?-1:1)*(y2-y1)*.12,my=(y1+y2)/2+(pi?-1:1)*(x1-x2)*.12;ctx.strokeStyle=cols[pi];ctx.lineWidth=2.6;ctx.beginPath();ctx.moveTo(x1,y1);ctx.quadraticCurveTo(mx,my,x2,y2);ctx.stroke();ctx.restore()}}));
+  Object.entries(pos).forEach(([v,[x,y]])=>node(ctx,x,y,16,v));
+  const ax=axes(ctx,140,560,980,170,[0,r.n+1],[0,Math.max(...r.ev)*1.1],{yt:[0,1,2,3].filter(v=>v<Math.max(...r.ev)*1.1),xl:"eigenvalue index"});
+  r.ev.forEach((l,i)=>{const x=ax.X(i+1),y=ax.Y(l*ease(t-i*.06));line(ctx,x,ax.Y(0),x,y,l<1e-9?C.gold:C.cyan,3);node(ctx,x,y,6,null,l<1e-9?C.gold:C.cyan)});
+  const zz=r.ev.filter(x=>Math.abs(x)<1e-9).length;hero(ctx,`${zz} zero${zz===1?"":"s"} = ${r.orbits.length} orbit${r.orbits.length===1?"":"s"}`,1000,170,32)}
+});
+
+/* ---- 10. entropy ---- */
+eye({id:"entropy",name:"Entropy",title:"The fixed-scale entropy",
+ note:"<b>Feed the Gram eigenvalues through the binary entropy.</b> It vanishes exactly on involutions. On long cycles the mean approaches 2 ln 2 − 1, and the deficit is an exact lattice sum: ℓ³ times it tends to 2ζ(3) on even cycles and ζ(3)/4 on odd ones, with every correction an odd zeta value. For every permutation the entropy per point is at most h(d_H/2), so it vanishes with the defect. <span class=grade>T</span>",
+ state:{l:12,view:"deficit"},
+ controls(st){return [range("cycle length ℓ","l",2,64,1),sel("View","view",[["deficit","finite-size deficit (ζ(3))"],["bound","global bound h(d_H/2)"]])]},
+ compute(st){const l=+st.l,ev=[...Array(l).keys()].map(j=>Math.sin(Math.PI*j/l)**2),S=ev.reduce((s,x)=>s+h2(x),0);return {l,ev,S,Dd:deficitDirect(l),De:deficitExact(l)}},
+ read(st,r){return [["S_ℓ/ℓ",(r.S/r.l).toFixed(9)],["2 ln 2 − 1",(2*Math.LN2-1).toFixed(9),"gold"],["ℓ³ D_ℓ (direct sum)",(r.l**3*r.Dd).toFixed(6)],["ℓ³ D_ℓ (exact series)",(r.l**3*r.De).toFixed(6),"ok"],["limit",r.l%2?"ζ(3)/4 = 0.300514":"2ζ(3) = 2.404114","gold"]]},
+ draw(ctx,st,t,r){if(st.view==="bound")return drawBound(ctx,t);title(ctx,"The fixed-scale entropy",`an ℓ = ${r.l} cycle: eigenvalues sin²(πj/ℓ) and the deficit`);
+  const ax=axes(ctx,110,170,440,360,[0,1],[0,1.02],{xt:[0,.5,1],yt:[0,.5,1],xl:"j/ℓ",yl:"sin²(πj/ℓ)"});ctx.save();ctx.strokeStyle=C.dim;ctx.lineWidth=2;ctx.beginPath();for(let i=0;i<=200;i++){const x=i/200;i?ctx.lineTo(ax.X(x),ax.Y(Math.sin(Math.PI*x)**2)):ctx.moveTo(ax.X(x),ax.Y(0))}ctx.stroke();ctx.restore();
+  r.ev.forEach((v,j)=>node(ctx,ax.X(j/r.l),ax.Y(v),6,null,v>.999||v<1e-9?C.gold:C.cyan));
+  const ls=[];for(let l=2;l<=64;l++)ls.push(l);const ax2=axes(ctx,700,170,450,360,[2,64],[0,3.3],{xlog:true,xt:[2,4,8,16,32,64],yt:[0,.5,1,1.5,2,2.5,3],xl:"ℓ",yl:"ℓ³ D_ℓ"});
+  line(ctx,700,ax2.Y(2*ZETA3),1150,ax2.Y(2*ZETA3),C.cyan,1.5,.8);line(ctx,700,ax2.Y(ZETA3/4),1150,ax2.Y(ZETA3/4),C.gold,1.5,.8);
+  txt(ctx,"2ζ(3)",1150,ax2.Y(2*ZETA3)-8,{size:17,col:C.cyan,align:"right",face:FONT_M});txt(ctx,"ζ(3)/4",1150,ax2.Y(ZETA3/4)-8,{size:17,col:C.gold,align:"right",face:FONT_M});
+  const pr=Math.min(1,t/5);ls.forEach((l,i)=>{if(i/ls.length>pr)return;const v=l**3*deficitExact(l);node(ctx,ax2.X(l),ax2.Y(v),l===r.l?8:4,null,l%2?C.gold:C.cyan)});
+  hero(ctx,"ℓ³D_ℓ = 2Σ ζ(2r+3)/ℓ²ʳ  (even)",610,640,30,C.cyan);hero(ctx,"ℓ³D_ℓ = ¼Σ ζ(2r+3)/(4ʳℓ²ʳ)  (odd)",610,700,30,C.gold)}
+});
+function drawBound(ctx,t){title(ctx,"The entropy vanishes with the defect","S(U)/n ≤ h(d_H/2) for every permutation");const ax=axes(ctx,140,170,960,520,[0,1],[0,.72],{xt:[0,.25,.5,.75,1],yt:[0,.2,.4,.6],xl:"Hamming defect d_H(U, I)",yl:"entropy per point"});
+  ctx.save();glow(ctx,C.gold,12);ctx.strokeStyle=C.gold;ctx.lineWidth=3;ctx.beginPath();for(let i=0;i<=200;i++){const d=i/200;i?ctx.lineTo(ax.X(d),ax.Y(h2(d/2))):ctx.moveTo(ax.X(0),ax.Y(0))}ctx.stroke();ctx.restore();
+  const r=rngf(11);const n=24;const cnt=Math.floor(Math.min(1,t/6)*700);for(let s=0;s<cnt;s++){const k=Math.floor(r()*n)+1;const p=[...Array(n).keys()];const idx=randPerm(n,r).slice(0,k);const sh=idx.slice(1).concat(idx[0]);if(r()<.5)idx.forEach((v,i)=>p[v]=sh[i]);else for(let i=0;i+1<idx.length;i+=2){p[idx[i]]=idx[i+1];p[idx[i+1]]=idx[i]}
+    const d=p.filter((x,i)=>x!==i).length/n;let S=0;cycles(p).forEach(c=>{for(let j=0;j<c.length;j++)S+=h2(Math.sin(Math.PI*j/c.length)**2)});node(ctx,ax.X(d),ax.Y(S/n),3.5,null,C.cyan)}
+  txt(ctx,"h(d_H / 2)",ax.X(.86),ax.Y(h2(.43))-16,{size:21,col:C.gold,face:FONT_M,align:"center"})}
+
+/* ---- 11. angles ---- */
+eye({id:"angles",name:"Angles",title:"Hamming as Grassmannian geometry",
+ note:"<b>The graph of a permutation is a subspace, and Hamming distance is a squared distance between the graph projectors.</b> It equals (2/n) Σ sin²θ over the principal angles, which are half the eigenphases of U*V. Because sin θ ≤ θ ≤ (π/2) sin θ, the mean squared angle is pinned between d_H/2 and π²d_H/8: Hamming convergence and Grassmannian convergence are the same thing. <span class=grade>T</span>",
+ state:{n:12,seed:1},
+ controls(st){return [range("points n","n",4,24,1),button("New sample",st=>st.seed++)]},
+ compute(st){const n=+st.n,r=rngf(st.seed*131+n),pts=[];let worst=0;for(let s=0;s<400;s++){const k=Math.floor(r()*(n+1));const U=[...Array(n).keys()];const idx=randPerm(n,r).slice(0,k);if(k>1){const sh=idx.slice(1).concat(idx[0]);idx.forEach((v,i)=>U[v]=sh[i])}
+   const d=U.filter((x,i)=>x!==i).length/n;let th2=0;cycles(U).forEach(c=>{for(let j=0;j<c.length;j++){const phi=2*Math.PI*j/c.length;let th=Math.abs(phi/2);if(th>Math.PI/2)th=Math.PI-th;th2+=th*th}});const m=th2/n;pts.push([d,m]);worst=Math.max(worst,d/2-m,m-Math.PI**2*d/8)}return {n,pts,worst}},
+ read(st,r){return [["pairs sampled",r.pts.length],["max violation of the sandwich",r.worst<=1e-12?"none":r.worst.toExponential(2),r.worst<=1e-12?"ok":"warn"],["lower constant","1/2"],["upper constant","π²/8 ≈ 1.2337","gold"]]},
+ draw(ctx,st,t,r){title(ctx,"Hamming as Grassmannian geometry","d_H/2 ≤ mean θ² ≤ (π²/8) d_H");const ax=axes(ctx,140,170,960,520,[0,1],[0,1.3],{xt:[0,.25,.5,.75,1],yt:[0,.4,.8,1.2],xl:"Hamming distance d_H(U, V)",yl:"mean squared principal angle"});
+  ctx.save();ctx.fillStyle="rgba(98,200,255,.07)";ctx.beginPath();ctx.moveTo(ax.X(0),ax.Y(0));ctx.lineTo(ax.X(1),ax.Y(Math.PI**2/8));ctx.lineTo(ax.X(1),ax.Y(.5));ctx.closePath();ctx.fill();ctx.restore();
+  line(ctx,ax.X(0),ax.Y(0),ax.X(1),ax.Y(.5),C.mint,2.5);line(ctx,ax.X(0),ax.Y(0),ax.X(1),ax.Y(Math.PI**2/8),C.gold,2.5);
+  const cnt=Math.floor(Math.min(1,t/4)*r.pts.length);r.pts.slice(0,cnt).forEach(([d,m])=>node(ctx,ax.X(d),ax.Y(m),3.5,null,C.cyan));
+  txt(ctx,"π² d_H / 8",ax.X(.8),ax.Y(Math.PI**2/8*.8)-14,{size:20,col:C.gold,face:FONT_M});txt(ctx,"d_H / 2",ax.X(.85),ax.Y(.425)+30,{size:20,col:C.mint,face:FONT_M});
+  hero(ctx,"d_H(U,V) = (2/n) Σ sin²θⱼ",420,250,34)}
+});
+
+/* ---- 12. probe ---- */
+eye({id:"probe",name:"Probe",title:"A fixed probe reads the spectral measure",
+ note:"<b>Two defects with the same spectrum, the same cost, the same determinant.</b> A fixed probe b still tells them apart: its response m_b(c) = b*(cI+G)⁻¹b is the Stieltjes transform of the spectral measure b sees. For (01)(23) the probe sits in the kernel; for (02)(13) it splits half and half between 0 and 2. The response is completely monotone in c. <span class=grade>T</span>",
+ state:{c:1},
+ controls(st){return [range("c","c",.05,3,.05)]},
+ compute(st){const c=+st.c,ga=gramOf([1,0,3,2]),gb=gramOf([2,3,0,1]),b=[Math.SQRT1_2,Math.SQRT1_2,0,0];const meas=G=>{const {vals,vecs}=jacobiV(G);const m={};vals.forEach((l,i)=>{const w=vecs.reduce((s,row,k)=>s+row[i]*b[k],0)**2;const kk=Math.round(l*1e6)/1e6;m[kk]=(m[kk]||0)+w});return m};
+  const ma=meas(ga),mb=meas(gb);const mf=(m,c)=>Object.entries(m).reduce((s,[l,w])=>s+w/(c+ +l),0);return {c,ma,mb,mf,va:mf(ma,c),vb:mf(mb,c),spa:jacobi(ga),spb:jacobi(gb)}},
+ read(st,r){return [["spectra equal",JSON.stringify(r.spa.map(x=>+x.toFixed(9)))===JSON.stringify(r.spb.map(x=>+x.toFixed(9)))?"yes":"no","ok"],["m_b(c), (01)(23)",r.va.toFixed(6)],["m_b(c), (02)(13)",r.vb.toFixed(6)],["at c = 1","1 and 2/3","gold"]]},
+ draw(ctx,st,t,r){title(ctx,"A fixed probe reads the spectral measure","same spectrum, different measure, different response");const ax=axes(ctx,140,180,560,440,[0,3],[0,4],{xt:[0,1,2,3],yt:[0,1,2,3,4],xl:"c",yl:"m_b(c)"});
+  [[r.ma,C.cyan],[r.mb,C.gold]].forEach(([m,col])=>{ctx.save();glow(ctx,col,10);ctx.strokeStyle=col;ctx.lineWidth=3;ctx.beginPath();const end=Math.min(3,.05+t*.8);for(let i=0;i<=200;i++){const c=.05+(end-.05)*i/200,v=Math.min(4,r.mf(m,c));i?ctx.lineTo(ax.X(c),ax.Y(v)):ctx.moveTo(ax.X(c),ax.Y(v))}ctx.stroke();ctx.restore()});
+  line(ctx,ax.X(r.c),ax.Y(0),ax.X(r.c),ax.Y(4),C.muted,1.5,.7);
+  txt(ctx,"(01)(23)",ax.X(.35),ax.Y(Math.min(3.8,r.mf(r.ma,.35)))-8,{size:19,col:C.cyan,face:FONT_M});txt(ctx,"(02)(13)",ax.X(.9),ax.Y(r.mf(r.mb,.9))+34,{size:19,col:C.gold,face:FONT_M});
+  [[r.ma,C.cyan,820],[r.mb,C.gold,1000]].forEach(([m,col,x0])=>{const ax2=axes(ctx,x0,260,140,280,[-.5,2.5],[0,1.05],{xt:[0,2],yt:x0===820?[0,.5,1]:[]});Object.entries(m).forEach(([l,w])=>{if(w<1e-9)return;const x=ax2.X(+l),y=ax2.Y(w);ctx.save();glow(ctx,col,12);line(ctx,x,ax2.Y(0),x,y,col,6);ctx.restore()})});
+  txt(ctx,"spectral measure seen by b",1000,230,{size:18,col:C.muted,align:"center"});hero(ctx,"m_b(c) = ∫ dμ_b(λ) / (c + λ)",610,760,34)}
+});
+
+/* ---- 13. torsion ---- */
+const TOR={n:[6,12,24,48,96],"3₁":0.07503296,"4₁":0.0657907,"5₂":0.16247078};
+eye({id:"torsion",name:"Torsion",title:"The regularised torsion on the padded family",
+ note:"<b>Pad a knot-group representation with fixed points and perturb one generator by a transposition inside the padding.</b> Only one small block of the twisted Fox matrix changes, so ΔT_η = (1/2n) log R_η and |ΔT_η| = ¼|log R_η|·d_H exactly, flat in n. Proportional to the defect, it vanishes with it and cannot obstruct. Values from the shipped replay script K3-V7-TORSION at t = 1.07. <span class=grade>T</span><span class=\"grade v\">V</span>",
+ state:{},
+ controls(st){return []},
+ compute(st){return {}},
+ read(st,r){return [["3₁ (Sym(3) rep)","0.07503","gold"],["4₁ (abelian rep)","0.06579","gold"],["5₂ (abelian rep)","0.16247","gold"],["flat over n = 6…96","every printed digit","ok"]]},
+ draw(ctx,st,t,r){title(ctx,"The regularised torsion on the padded family","|ΔT_η| / d_H is a constant: flat in n, so it vanishes with the defect");const ax=axes(ctx,140,180,960,460,[5,110],[0,.2],{xlog:true,xt:[6,12,24,48,96],yt:[0,.05,.1,.15,.2],xl:"padded size n",yl:"|ΔT_η| / d_H"});
+  [["3₁",C.cyan],["4₁",C.mint],["5₂",C.gold]].forEach(([k,col],i)=>{const v=TOR[k];const pr=ease(t*.5-i*.3);ctx.save();glow(ctx,col,10);line(ctx,ax.X(6),ax.Y(v),ax.X(6)+(ax.X(96)-ax.X(6))*pr,ax.Y(v),col,3);ctx.restore();TOR.n.forEach(n=>{if(ax.X(n)<=ax.X(6)+(ax.X(96)-ax.X(6))*pr+1)node(ctx,ax.X(n),ax.Y(v),7,null,col)});txt(ctx,`${k}  ${v.toFixed(5)}`,ax.X(100),ax.Y(v)+(k==="4₁"?30:-12),{size:19,col,face:FONT_M,align:"right"})});
+  hero(ctx,"|ΔT_η| = ¼ |log R_η| · d_H",620,760,36)}
+});
+
+/* ---- MIX ---- */
+const CHANNELS=[
+ {id:"dH",name:"defect d_H",col:C.fg,f:(p,n)=>moved(p)/n},
+ {id:"trK",name:"(1/n) Tr K_U",col:C.mint,f:(p,n)=>moved(p)/n/2},
+ {id:"S",name:"entropy S(U)/n",col:C.cyan,f:(p,n)=>{let S=0;cycles(p).forEach(c=>{for(let j=0;j<c.length;j++)S+=h2(Math.sin(Math.PI*j/c.length)**2)});return S/n}},
+ {id:"hb",name:"bound h(d_H/2)",col:C.gold,f:(p,n)=>h2(moved(p)/n/2)},
+ {id:"th",name:"mean θ² (Grassmannian)",col:"#c79bff",f:(p,n)=>{let s=0;cycles(p).forEach(c=>{for(let j=0;j<c.length;j++){let th=Math.PI*j/c.length;if(th>Math.PI/2)th=Math.PI-th;s+=th*th}});return s/n}},
+ {id:"tor",name:"torsion |ΔT| (3₁)",col:C.ember,f:(p,n)=>0.07503296*moved(p)/n},
+];
+function moved(p){return p.reduce((s,x,i)=>s+(x!==i),0)}
+eye({id:"mix",name:"MIX",mix:true,title:"The mixer",
+ note:"<b>Each eye recorded on its own, then mixed.</b> One family of defects is swept from no defect to the whole space, and every eye reads it separately; the board overlays the recordings. Raw shows the values; RMS puts every channel on one scale so their shapes can be compared. Every reading that lives natively in the Hamming metric goes to zero with the defect, which is the paper's negative result in one picture; only the coboundary constant, an incidence count, produces a number that does not. <span class=grade>T</span><span class=\"grade v\">V</span>",
+ state:{n:24,arr:"trans",norm:"raw",on:{dH:true,trK:true,S:true,hb:true,th:true,tor:true}},
+ controls(st){return [range("points n","n",8,64,4),sel("Defect arrangement","arr",[["trans","disjoint transpositions"],["three","disjoint 3-cycles"],["long","one long cycle"]]),sel("Display","norm",[["raw","raw values"],["rms","RMS normalised"]]),...CHANNELS.map(ch=>check(ch.name,ch.id))]},
+ compute(st){const n=+st.n,rows=[];for(let m=0;m<=n;m++){let p=[...Array(n).keys()];if(st.arr==="trans"){const k=m-(m%2);for(let i=0;i+1<k;i+=2){p[i]=i+1;p[i+1]=i}}else if(st.arr==="three"){const k=m-(m%3);for(let i=0;i+2<k;i+=3){p[i]=i+1;p[i+1]=i+2;p[i+2]=i}}else{if(m>=2)for(let i=0;i<m;i++)p[i]=(i+1)%m}
+  const row={d:moved(p)/n};CHANNELS.forEach(ch=>row[ch.id]=ch.f(p,n));rows.push(row)}
+  const rms={};CHANNELS.forEach(ch=>{rms[ch.id]=Math.sqrt(rows.reduce((s,r)=>s+r[ch.id]**2,0)/rows.length)||1});return {n,rows,rms}},
+ read(st,r){const last=r.rows[r.rows.length-1],z=r.rows[0];return [["sweep points",r.rows.length],["all channels at d_H = 0",CHANNELS.every(ch=>Math.abs(z[ch.id])<1e-12)?"0":"nonzero",CHANNELS.every(ch=>Math.abs(z[ch.id])<1e-12)?"ok":"warn"],["entropy ≤ bound everywhere",r.rows.every(x=>x.S<=x.hb+1e-12)?"yes":"no",r.rows.every(x=>x.S<=x.hb+1e-12)?"ok":"warn"],["coboundary constant","k/3 (does not vanish)","gold"]]},
+ draw(ctx,st,t,r){title(ctx,"The mixer","every native reading, recorded separately, vanishes with the defect");const maxv=st.norm==="rms"?Math.max(...CHANNELS.map(ch=>Math.max(...r.rows.map(x=>x[ch.id]/r.rms[ch.id])))):1.25;
+  const ax=axes(ctx,130,160,700,520,[0,1],[0,maxv*1.05],{xt:[0,.25,.5,.75,1],yt:st.norm==="rms"?[0,1,2]:[0,.25,.5,.75,1,1.25],xl:"defect d_H",yl:st.norm==="rms"?"value / RMS":"value"});
+  const pr=Math.min(1,.05+t/6);CHANNELS.forEach((ch,ci)=>{if(!st.on[ch.id])return;ctx.save();glow(ctx,ch.col,10);ctx.strokeStyle=ch.col;ctx.lineWidth=2.6;ctx.beginPath();let first=true;r.rows.forEach(row=>{if(row.d>pr)return;const v=row[ch.id]/(st.norm==="rms"?r.rms[ch.id]:1);const x=ax.X(row.d),y=ax.Y(Math.min(v,maxv*1.05));first?ctx.moveTo(x,y):ctx.lineTo(x,y);first=false});ctx.stroke();ctx.restore()});
+  CHANNELS.forEach((ch,i)=>{const y=210+i*56;ctx.save();ctx.globalAlpha=st.on[ch.id]?1:.3;glow(ctx,ch.col,10);line(ctx,880,y,930,y,ch.col,4);ctx.restore();txt(ctx,ch.name,944,y+6,{size:18,col:st.on[ch.id]?C.fg:C.muted})});
+  hero(ctx,"…and the constant stays k/3",990,600,30)}
+});
+
+/* ============================== UI plumbing ============================== */
+function frac(a,b){if(!b)return "—";const g=(x,y)=>y?g(y,x%y):x;const d=g(Math.abs(a),Math.abs(b));return (b/d===1)?String(a/d):`${a/d}/${b/d}`}
+function sub(n){return String(n).split("").map(c=>"₀₁₂₃₄₅₆₇₈₉"[+c]).join("")}
+function countE(r){let c=0;for(let u=0;u<r.k;u++)for(let v=u+1;v<r.k;v++)if(r.a[u][v])c++;return c}
+function legendS3(ctx,x,y){[[T01,"(0 1)"],[T12,"(1 2)"],[T02,"(0 2)"],[IDX["120"],"3-cycle"]].forEach(([i,s],j)=>{ctx.save();glow(ctx,ECOL(i),10);line(ctx,x+j*170,y,x+j*170+40,y,ECOL(i),4);ctx.restore();txt(ctx,s,x+j*170+50,y+6,{size:17,col:C.muted,face:FONT_M})})}
+function sel(label,k,opts){return {type:"sel",label,k,opts}} function range(label,k,a,b,s){return {type:"range",label,k,a,b,s}} function button(label,fn){return {type:"btn",label,fn}} function text(label,k){return {type:"text",label,k}} function check(label,k){return {type:"chk",label,k}}
+
+let cur=EYES[0],res=null,t0=performance.now(),raf=null;
+const nav=document.getElementById("eyes");
+EYES.forEach(e=>{const b=document.createElement("button");b.textContent=e.name;b.id="eye-"+e.id;if(e.mix)b.className="mix";b.setAttribute("aria-pressed","false");b.onclick=()=>select(e.id);nav.appendChild(b)});
+function select(id){cur=EYES.find(e=>e.id===id)||EYES[0];document.querySelectorAll("#eyes button").forEach(b=>b.setAttribute("aria-pressed",b.id==="eye-"+cur.id));buildControls();recompute();t0=performance.now();try{history.replaceState(null,"","#"+cur.id)}catch(e){}}
+function buildControls(){const box=document.getElementById("ctl");box.innerHTML="";document.getElementById("ctlTitle").textContent=cur.title;const st=cur.state;
+  const items=cur.controls(st);if(!items.length){box.innerHTML='<p class="note">This eye has no controls; it replays the shipped script.</p>'}
+  items.forEach((c,i)=>{const id=`c-${cur.id}-${i}`;if(c.type==="sel"){const l=document.createElement("label");l.htmlFor=id;l.textContent=c.label;const s=document.createElement("select");s.id=id;c.opts.forEach(([v,tx])=>{const o=document.createElement("option");o.value=v;o.textContent=tx;s.appendChild(o)});s.value=String(st[c.k]);s.onchange=()=>{st[c.k]=s.value;recompute()};l.appendChild(s);box.appendChild(l)}
+   else if(c.type==="range"){const l=document.createElement("label");l.htmlFor=id;const span=document.createElement("span");const upd=()=>span.textContent=`${c.label}: ${st[c.k]}`;upd();const r=document.createElement("input");r.type="range";r.id=id;r.min=c.a;r.max=c.b;r.step=c.s;r.value=st[c.k];r.oninput=()=>{st[c.k]=+r.value;upd();recompute()};l.appendChild(span);l.appendChild(r);box.appendChild(l)}
+   else if(c.type==="text"){const l=document.createElement("label");l.htmlFor=id;l.textContent=c.label;const r=document.createElement("input");r.type="text";r.id=id;r.value=st[c.k];r.onchange=()=>{st[c.k]=r.value;recompute()};l.appendChild(r);box.appendChild(l)}
+   else if(c.type==="chk"){const l=document.createElement("label");l.className="chk";l.htmlFor=id;const r=document.createElement("input");r.type="checkbox";r.id=id;r.checked=!!st.on[c.k];r.onchange=()=>{st.on[c.k]=r.checked;recompute()};l.appendChild(r);l.appendChild(document.createTextNode(c.label));box.appendChild(l)}
+   else if(c.type==="btn"){const b=document.createElement("button");b.className="btn";b.id=id;b.textContent=c.label;b.onclick=()=>{c.fn(st);buildControls();recompute();t0=performance.now()};box.appendChild(b)}});
+  document.getElementById("note").innerHTML=cur.note}
+function recompute(){res=cur.compute(cur.state);const dl=document.getElementById("read");dl.innerHTML="";cur.read(cur.state,res).forEach(([k,v,cls])=>{const dt=document.createElement("dt");dt.textContent=k;const dd=document.createElement("dd");dd.textContent=v;if(cls)dd.className=cls;dl.appendChild(dt);dl.appendChild(dd)})}
+function renderEye(e,state,r,t,ctx){ctx=ctx||X;ctx.save();ctx.setTransform(cv.width/W0,0,0,cv.height/H0,0,0);clear(ctx);e.draw(ctx,state,t,r);ctx.restore()}
+const reduce=window.matchMedia&&matchMedia("(prefers-reduced-motion: reduce)").matches;
+function loop(){const t=reduce?20:(performance.now()-t0)/1000;renderEye(cur,cur.state,res,t);raf=requestAnimationFrame(loop)}
+
+/* ============================== film mode: deterministic frames for recording ============================== */
+window.FILM={eyes:EYES,set(id,patch){const e=EYES.find(x=>x.id===id);Object.assign(e.state,patch||{});return e},
+  cache:{},frame(id,patch,t){cancelAnimationFrame(raf);raf=null;const e=this.set(id,patch);const key=id+JSON.stringify(e.state);const r=this.cache[key]||(this.cache[key]=e.compute(e.state));renderEye(e,e.state,r,t);return true}};
+
+const start=(location.hash||"").slice(1);select(EYES.some(e=>e.id===start)?start:"seed");loop();
+</script>

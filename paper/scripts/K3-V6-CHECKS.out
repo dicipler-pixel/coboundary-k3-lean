@@ -1,0 +1,5 @@
+(A) max of S/n - h(d_H/2) over 2000 permutations: 0.00e+00  (must be <= 0)
+(B) max violation of d_H/2 <= mean theta^2 <= pi^2 d_H/8: 2.22e-16  (must be <= 0)
+(C) 500 weighted families: kernel dim == number of orbits in all cases: True; trace law holds; G_tot equals the weighted Schreier Laplacian up to the factor checked
+    factor check on a 3-cycle: G == L(A)? True
+(D) Jensen lower / chord upper bound on one spectral bin: violations in 3000 random bins = 0

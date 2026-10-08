@@ -1,0 +1,7 @@
+sum 1/(m(4m^2-1)) - (2ln2-1) = 0.0
+x=0.1: f-series = 0.0
+x=0.237: f-series = 0.0
+x=0.5: f-series = 0.0
+max relative error, direct sum vs exact series, l=2..39 and large l: 1.3621e-29
+D_63 - D_126 = -1.7219e-41
+limits: 2zeta(3) = 2.40411380632  zeta(3)/4 = 0.30051422579
