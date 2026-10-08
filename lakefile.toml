@@ -9,4 +9,4 @@ rev = "v4.34.1"
 
 [[lean_lib]]
 name = "CoboundaryK3"
-roots = ["CoboundaryK3.Basic", "CoboundaryK3.AllK"]
+roots = ["CoboundaryK3.Basic", "CoboundaryK3.AllK", "CoboundaryK3.Replication"]

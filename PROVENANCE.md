@@ -10,6 +10,10 @@ Appendix A, in gauged form, entered edge by edge.
 complex is k/3 for every k ≥ 4*). The replicated `K₈` witness is the one printed in Appendix A of
 version 7 (clusters `{0,1}, {2,3}, {4,5}, {6,7}`).
 
+`CoboundaryK3/Replication.lean` was added on 8 October 2026: Lemma 6 and Corollary 7 of
+version 7 (balanced replication, for every `q`). Grok drafted its structure; Claude completed the
+counting lemmas and the proofs.
+
 `paper/` holds version 7 of the paper, its LaTeX source and figures, and every script it runs,
 with the output of the last run. `mixer/k3_mixer.html` is the interactive page made for the paper;
 its numbers are computed in the page.
