@@ -8,7 +8,7 @@
 ![sorry](https://img.shields.io/badge/sorry-0-2EA043)
 ![Code: MIT](https://img.shields.io/badge/code-MIT-lightgrey)
 ![Text: CC BY 4.0](https://img.shields.io/badge/text-CC%20BY%204.0-lightgrey)
-[![Paper DOI](https://img.shields.io/badge/paper-10.5281%2Fzenodo.22090958-blue)](https://doi.org/10.5281/zenodo.22090958)
+[![Paper DOI](https://img.shields.io/badge/paper%20v7-10.5281%2Fzenodo.23245792-blue)](https://doi.org/10.5281/zenodo.23245792)
 
 Jeromie Beasley
 
@@ -73,8 +73,19 @@ false statements that must fail for a mathematical reason.
 * [`mixer/k3_mixer.html`](mixer/k3_mixer.html): an interactive page with one live eye per
   result; every number on it is computed in the page. Download and open it in a browser.
 
-DOI [10.5281/zenodo.22090958](https://doi.org/10.5281/zenodo.22090958) always opens the newest
-version deposited on Zenodo.
+## The archive on Zenodo
+
+Version 7 is deposited at DOI [10.5281/zenodo.23245792](https://doi.org/10.5281/zenodo.23245792),
+CC BY 4.0. The record holds:
+
+* `paper_v7.pdf`, the paper;
+* `complete_complex_k3_v7_package.zip`, the paper package: LaTeX source, figures, every script with
+  the output of its last run, and the change ledgers;
+* the mixer bundle: the interactive mixer, its test, the paper, the scripts and the film source.
+
+The Lean proofs live here, in this repository, and are checked on every push. The 25 August 2026
+paper (k = 4, …, 8) is the earlier record, DOI
+[10.5281/zenodo.22090958](https://doi.org/10.5281/zenodo.22090958).
 
 ## Licence
 
