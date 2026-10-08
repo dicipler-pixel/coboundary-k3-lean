@@ -1,6 +1,6 @@
 /-
 The permutation coboundary constant of the complete complex is k/3 for every k ≥ 4
-(Jeromie Beasley, DOI 10.5281/zenodo.22090958, version 7): the machine-checked steps added for
+(Jeromie Beasley, version 8, DOI 10.5281/zenodo.23245792 for version 7): the machine-checked steps added for
 the all-k version.
 
 `Basic.lean` checks the five computed witnesses for k = 4, …, 8. This file adds what the all-k
@@ -12,7 +12,7 @@ proof uses that a kernel can check:
 * the equality case of the star bound (Corollary 2) on every witness: each star gauge costs
   exactly `D`, and the star costs add up to `3N`;
 * the replicated seed on `K₈` (Corollary 7 at q = 2): `N = 64`, `D = 24`, every gauge searched;
-* the cross-degree convention on the seed (Proposition 10): against comparison permutations of
+* the cross-degree convention on the seed (Proposition 11): against comparison permutations of
   degree 2, 3 and 4 the cheapest repair is `10/3`, `2` and `3`, so degree three is cheapest.
 
 The general replication lemma and the star-gauge identity for every cochain are proved in the
@@ -1136,7 +1136,7 @@ theorem witness_r8 :
   ⟨by decide +kernel, gauge_lower_bb wr8 24 r8_root, by decide +kernel, by norm_num⟩
 
 
-/-! ## The cross-degree convention (Proposition 10)
+/-! ## The cross-degree convention (Proposition 11)
 
 Chapman–Lubotzky also compare a degree-3 permutation `σ` with a degree-`m` one `τ`, by
 `1 − #{j < min(3, m) : σ j = τ j} / max(3, m)`. Multiplying by `max(3, m)` keeps everything in
@@ -1357,7 +1357,7 @@ theorem cross_m4_lower : ∀ β : Fin 4 → Perm (Fin 4), 12 ≤ errCost w4 β :
   rcases ha with rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl
   exacts [c4_leaf_0, c4_leaf_1, c4_leaf_2, c4_leaf_3, c4_leaf_4, c4_leaf_5, c4_leaf_6, c4_leaf_7, c4_leaf_8, c4_leaf_9, c4_leaf_10, c4_leaf_11, c4_leaf_12, c4_leaf_13, c4_leaf_14, c4_leaf_15, c4_leaf_16, c4_leaf_17, c4_leaf_18, c4_leaf_19, c4_leaf_20, c4_leaf_21, c4_leaf_22, c4_leaf_23]
 
-/-- **Proposition 10, the seed.** Against comparison permutations of degree 2, 3 and 4 the seed's
+/-- **Proposition 11, the seed.** Against comparison permutations of degree 2, 3 and 4 the seed's
 cheapest scaled repair is `10`, `6` and `12`, that is `10/3`, `2` and `3` in edge units, each
 attained. Degree three, the seed's own degree, is the cheapest. -/
 theorem cross_degree_seed :

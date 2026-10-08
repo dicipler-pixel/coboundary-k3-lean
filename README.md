@@ -12,6 +12,8 @@
 
 Jeromie Beasley
 
+<img src="ai_reviewer_advisory_small.png" alt="Created with artificial intelligence: reviewer advisory" width="260">
+
 </div>
 
 ---
@@ -28,7 +30,7 @@ parity retraction everywhere else. At `k = 4` the bound needs the non-abelian gr
 
 [`CoboundaryK3/Basic.lean`](CoboundaryK3/Basic.lean): the five computed witnesses.
 
-| Paper (v7) | Result | Theorem |
+| Paper (v8) | Result | Theorem |
 | :--- | :--- | :--- |
 | Theorem 4, `k = 4` | Witness: defect `N = 8`; every gauge costs `≥ 6`; `6` attained; `N/D = 4/3` | `witness_k4` |
 | Theorem 4, `k = 5` | `N = 10`, `D = 6`, `N/D = 5/3` | `witness_k5` |
@@ -38,23 +40,23 @@ parity retraction everywhere else. At `k = 4` the bound needs the non-abelian gr
 | Sec. 3 | Exhausting gauges with `β(0) = 1` loses nothing: a constant right factor conjugates every edge term, and the Hamming count is conjugation-invariant | `moved_conj`, `cost_mul_const`, `gauge_lower`, `gauge_lower'`, `gauge_lower_bb` |
 | Sec. 3 | The branch-and-bound search used for `k = 6, 7, 8` is sound: once the cost of the assigned edges reaches `D`, every completion does | `pcost_mono`, `search_sound`, `search_step`, `search_split`, `pcost_ofFn` |
 | Prop. 5 | Around the `k = 4` witness triangle the three distinct transpositions compose to a transposition, while each adjacent product is a 3-cycle | `k4_mechanism` |
-| Theorem 13 | `⟨e_{πi}−e_i, e_{πj}−e_j⟩ = 2[i=j] − [πi=j] − [πj=i]`, the entries of `2I − A`, the Laplacian of the cycle graph; and `2 − 2cos 2x = 4 sin² x` | `delta_prod`, `disp_gram`, `cycle_laplacian_eigen` |
+| Theorem 14 | `⟨e_{πi}−e_i, e_{πj}−e_j⟩ = 2[i=j] − [πi=j] − [πj=i]`, the entries of `2I − A`, the Laplacian of the cycle graph; and `2 − 2cos 2x = 4 sin² x` | `delta_prod`, `disp_gram`, `cycle_laplacian_eigen` |
 
 [`CoboundaryK3/AllK.lean`](CoboundaryK3/AllK.lean): the steps of the all-`k` proof that a kernel
 can check.
 
-| Paper (v7) | Result | Theorem |
+| Paper (v8) | Result | Theorem |
 | :--- | :--- | :--- |
 | Theorem 8 | The parity retraction `r(g) = t^parity(g)` is the sign map read in `{1, t}`; it is a homomorphism, commutes with inverses, fixes `{1, t}` and never moves more points | `retr_eq_sign`, `retr_mul`, `retr_inv`, `retr_mem`, `retr_fix`, `retr_moved` |
 | Theorem 8 | **For every `k`:** retracting any `Sym(3)` gauge of a binary cochain into `{1, t}` never raises the cost, so gauges outside `{1, t}` do no better | `retract_cost`, `binary_gauge_suffices` |
 | Corollary 2 | The equality case of the star bound on every witness: each of the `k` star gauges costs exactly `D`, and the star costs add up to `3N` | `stars_k4`, `stars_k5`, `stars_k6`, `stars_k7`, `stars_k8`, `stars_r8` |
 | Corollary 7 | The replicated seed on `K₈` (`q = 2`): `N = 64 = 8q³`, every one of the `6⁷` root-fixed gauges costs `≥ 24 = 6q²`, `24` attained, `N/D = 8/3` | `witness_r8` |
-| Proposition 10 | The cross-degree convention on the seed: against comparison permutations of degree 2, 3 and 4 the cheapest repair is `10/3`, `2` and `3` (scaled: 10, 6, 12), each attained; fixing `β(0) = 1` loses nothing | `cross_degree_seed`, `cross_m4_lower`, `errCost_mul_left`, `err_lower`, `allL_sound`, `mem_perms2`, `mem_perms3`, `mem_perms4` |
+| Proposition 11 | The cross-degree convention on the seed: against comparison permutations of degree 2, 3 and 4 the cheapest repair is `10/3`, `2` and `3` (scaled: 10, 6, 12), each attained; fixing `β(0) = 1` loses nothing | `cross_degree_seed`, `cross_m4_lower`, `errCost_mul_left`, `err_lower`, `allL_sound`, `mem_perms2`, `mem_perms3`, `mem_perms4` |
 
 [`CoboundaryK3/Replication.lean`](CoboundaryK3/Replication.lean): balanced replication, for every
 cochain, every `k` and every `q`.
 
-| Paper (v7) | Result | Theorem |
+| Paper (v8) | Result | Theorem |
 | :--- | :--- | :--- |
 | Lemma 6 | Replicating a cochain `q`-fold multiplies its triangle defect by exactly `q³` | `rep_defect` |
 | Lemma 6 | A gauge constant on clusters costs exactly `q²` times its seed cost | `rep_attain` |
@@ -75,8 +77,10 @@ false statements that must fail for a mathematical reason.
 
 ## The paper, its scripts, and the mixer
 
-* [`paper/permutation-coboundary-k3-v7.pdf`](paper/permutation-coboundary-k3-v7.pdf): version 7,
-  8 October 2026, with its LaTeX source and figures.
+* [`paper/permutation-coboundary-k3-v8.pdf`](paper/permutation-coboundary-k3-v8.pdf): version 8,
+  8 October 2026, with its LaTeX source, its HTML edition
+  ([`permutation-coboundary-k3-v8.html`](paper/permutation-coboundary-k3-v8.html), download and open
+  in a browser) and figures. Version 7 is kept beside it.
 * [`paper/scripts/`](paper/scripts): every computation in the paper as a runnable script, with
   the output of its last run, including an independent adversarial re-check
   (`K3-V7-ADVERSARIAL`).
@@ -85,13 +89,11 @@ false statements that must fail for a mathematical reason.
 
 ## The archive on Zenodo
 
-Version 7 is deposited at DOI [10.5281/zenodo.23245792](https://doi.org/10.5281/zenodo.23245792),
-CC BY 4.0. The record holds:
-
-* `paper_v7.pdf`, the paper;
-* `complete_complex_k3_v7_package.zip`, the paper package: LaTeX source, figures, every script with
-  the output of its last run, and the change ledgers;
-* the mixer bundle: the interactive mixer, its test, the paper, the scripts and the film source.
+The paper is deposited on Zenodo, CC BY 4.0: version 7 at DOI
+[10.5281/zenodo.23245792](https://doi.org/10.5281/zenodo.23245792), and version 8 as the next
+version of the same record. Each version holds the paper as a PDF and as an HTML edition, the
+interactive mixer as its own page, and a package zip with every script and the output of its last
+run, the LaTeX source and figures, the Lean proofs and the change ledgers.
 
 The Lean proofs live here, in this repository, and are checked on every push. The 25 August 2026
 paper (k = 4, …, 8) is the earlier record, DOI

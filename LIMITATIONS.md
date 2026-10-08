@@ -13,12 +13,12 @@ Lean proves exactly the statements written, under exactly the hypotheses written
 * Theorem 8 at the `k` that are not multiples of four combines Kozlov's theorem for `F₂` (cited)
   and the parity retraction. The retraction step is proved here for every `k` (`retract_cost`,
   `binary_gauge_suffices`); Kozlov's theorem and the assembly into Theorem 8 are not formalized.
-* The gauge minimum is over `Sym(3)`-valued gauges. Proposition 10 (cross-degree) is checked on the
+* The gauge minimum is over `Sym(3)`-valued gauges. Proposition 11 (cross-degree) is checked on the
   seed against comparison permutations of degree 2, 3 and 4; the baselines for degree `≥ 5`, the
   replicated seeds and the binary witnesses are argued in the paper.
 * The coefficient-subgroup minima of Proposition 5 (`Sym(2)` gives 2, `ℤ/3` gives 3/2) are
   computed in the paper's scripts and not formalized.
-* Section 5 beyond Theorem 13's Gram formula (torsion, cycle-type recovery, Schreier aggregates,
+* Section 5 beyond Theorem 14's Gram formula (torsion, cycle-type recovery, Schreier aggregates,
   entropy and its zeta expansion, graph projectors and principal angles, the fixed probe) is
   proved or computed in the paper and not formalized. The eigenvalues `2 − 2cos(2πj/ℓ)` of the
   cycle Laplacian are not formalized; only their rewriting as `4 sin²(πj/ℓ)` is.

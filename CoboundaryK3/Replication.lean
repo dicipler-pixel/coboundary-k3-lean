@@ -1,5 +1,5 @@
 /-
-Balanced replication, kernel-checked (Lemma 6 and Corollary 7 of version 7 of the paper).
+Balanced replication, kernel-checked (Lemma 6 and Corollary 7 of version 8 of the paper).
 
 Replace each vertex of `K_k` by a cluster of `q` vertices; put the identity on every edge inside
 a cluster and the seed value on every edge between two clusters. For every cochain `α`, every

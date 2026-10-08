@@ -4,7 +4,7 @@ title: "The Permutation Coboundary Constant of the Complete Complex Is k/3: Lean
 authors:
   - family-names: "Beasley"
     given-names: "Jeromie"
-version: 2.0.0
+version: 3.0.0
 date-released: 2026-10-08
 license:
   - MIT
@@ -12,7 +12,7 @@ license:
 repository-code: "https://github.com/dicipler-pixel/coboundary-k3-lean"
 references:
   - type: article
-    title: "The Permutation Coboundary Constant of the Complete Complex Is k/3 for Every k ≥ 4"
+    title: "The Permutation Coboundary Constant of the Complete Complex Is k/3 for Every k ≥ 4 (version 8)"
     authors:
       - family-names: "Beasley"
         given-names: "Jeromie"
