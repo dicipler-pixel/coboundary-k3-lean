@@ -30,7 +30,7 @@ ROOT = pathlib.Path(__file__).resolve().parents[1]
 BASIC = ROOT / "CoboundaryK3" / "Basic.lean"
 ELEMS = ["1", "t01", "t12", "t02", "c1", "c2"]  # the order of `S3list`
 START = "/-! ### The k = 6, 7 and 8 exhaustions, split by the gauge on the first vertices -/\n\n"
-END = "\n\n/-- **Theorem 3, k = 6.**"
+END = "\n\n/-- **Theorem 4, k = 6.**"
 LEAF_FUEL = 4  # vertices left to assign in every leaf
 
 # (name, witness, D, number of vertices k, number of fixed vertices after vertex 0 in a leaf)

@@ -2,7 +2,7 @@
 The permutation coboundary constant of the complete complex is k/3 for 4 ≤ k ≤ 8
 (Jeromie Beasley, DOI 10.5281/zenodo.22090958): the machine-checked witnesses.
 
-Conventions follow the paper (Sec. 1 and Appendix B). Permutations of `{0,1,2}` act on points;
+Conventions follow the paper (Section 1). Permutations of `{0,1,2}` act on points;
 the Hamming count `moved σ` is the number of points `σ` moves. A 1-cochain on the complete
 complex `K_k` assigns `α u v` to each edge `u < v`, with `α(v,u) = α(u,v)⁻¹`. Its triangle
 defect is `N = Σ_{u<v<w} moved(α(u,v) α(v,w) α(w,u))` and the cost of a gauge
@@ -10,8 +10,8 @@ defect is `N = Σ_{u<v<w} moved(α(u,v) α(v,w) α(w,u))` and the cost of a gaug
 gauge. Both are counts of moved points, so `N/D` is the paper's counting ratio.
 
 This file proves, for each witness of Appendix A, the defect `N`, that no gauge costs less than
-`D`, and that `D` is attained, so that `N/D = k/3`. With the Chapman–Lubotzky lower bound
-`h₁(K_k, Sym) ≥ k/3` (cited, Proposition 1) this is the upper half of Theorem 3.
+`D`, and that `D` is attained, so that `N/D = k/3`: the upper half of Theorem 4. The lower half,
+the paper's Proposition 1 (Chapman–Lubotzky's Proposition 3.2), is proved in `Constant.lean`.
 
 The gauge minimum is checked by exhausting every gauge with `β(0) = 1`; `gauge_lower` proves that
 this loses nothing, because right multiplication by a constant conjugates every edge term.
@@ -277,13 +277,13 @@ def w8 : Fin 8 → Fin 8 → S3 :=
     ((1, 3), t01), ((1, 4), t01), ((1, 6), t01), ((3, 7), t01),
     ((0, 4), t02), ((2, 3), t02), ((2, 4), t02), ((4, 7), c2)]
 
-/-- **Theorem 3, k = 4.** `N = 8`, every gauge costs at least `6`, and `6` is attained:
+/-- **Theorem 4, k = 4.** `N = 8`, every gauge costs at least `6`, and `6` is attained:
 `N/D = 4/3`. -/
 theorem witness_k4 :
     defect w4 = 8 ∧ (∀ β, 6 ≤ cost w4 β) ∧ cost w4 (fun _ => 1) = 6 ∧ 8 * 3 = 4 * 6 :=
   ⟨by decide +kernel, gauge_lower w4 6 (by decide +kernel), by decide +kernel, by norm_num⟩
 
-/-- **Theorem 3, k = 5.** `N = 10`, `D = 6`: `N/D = 5/3`. -/
+/-- **Theorem 4, k = 5.** `N = 10`, `D = 6`: `N/D = 5/3`. -/
 theorem witness_k5 :
     defect w5 = 10 ∧ (∀ β, 6 ≤ cost w5 β) ∧ cost w5 (fun _ => 1) = 6 ∧ 10 * 3 = 5 * 6 :=
   ⟨by decide +kernel, gauge_lower w5 6 (by decide +kernel), by decide +kernel, by norm_num⟩
@@ -1265,31 +1265,31 @@ private theorem k8_node_5 : search w8 27 6 [1, c2] = true :=
 private theorem k8_root : search w8 27 7 [1] = true :=
   search_split w8 27 6 [1] k8_node_0 k8_node_1 k8_node_2 k8_node_3 k8_node_4 k8_node_5
 
-/-- **Theorem 3, k = 6.** `N = 36`, `D = 18`: `N/D = 2 = 6/3`. -/
+/-- **Theorem 4, k = 6.** `N = 36`, `D = 18`: `N/D = 2 = 6/3`. -/
 theorem witness_k6 :
     defect w6 = 36 ∧ (∀ β, 18 ≤ cost w6 β) ∧ cost w6 (fun _ => 1) = 18 ∧ 36 * 3 = 6 * 18 :=
   ⟨by decide +kernel, gauge_lower_bb w6 18 k6_root, by decide +kernel, by norm_num⟩
 
-/-- **Theorem 3, k = 7.** `N = 28`, `D = 12`: `N/D = 7/3`. -/
+/-- **Theorem 4, k = 7.** `N = 28`, `D = 12`: `N/D = 7/3`. -/
 theorem witness_k7 :
     defect w7 = 28 ∧ (∀ β, 12 ≤ cost w7 β) ∧ cost w7 (fun _ => 1) = 12 ∧ 28 * 3 = 7 * 12 :=
   ⟨by decide +kernel, gauge_lower_bb w7 12 k7_root, by decide +kernel, by norm_num⟩
 
-/-- **Theorem 3, k = 8.** `N = 72`, `D = 27`: `N/D = 8/3`. The residual carries twelve
+/-- **Theorem 4, k = 8.** `N = 72`, `D = 27`: `N/D = 8/3`. The residual carries twelve
 transpositions (all three of `Sym(3)`) and one 3-cycle. -/
 theorem witness_k8 :
     defect w8 = 72 ∧ (∀ β, 27 ≤ cost w8 β) ∧ cost w8 (fun _ => 1) = 27 ∧ 72 * 3 = 8 * 27 :=
   ⟨by decide +kernel, gauge_lower_bb w8 27 k8_root, by decide +kernel, by norm_num⟩
 
-/-! ## Proposition 4: the non-abelian mechanism at k = 4 -/
+/-! ## Proposition 5: the non-abelian mechanism at k = 4 -/
 
-/-- **Proposition 4, mechanism.** Around the witness triangle the three distinct transpositions
+/-- **Proposition 5, mechanism.** Around the witness triangle the three distinct transpositions
 compose to a transposition (2 moved points), while each adjacent product is a 3-cycle. -/
 theorem k4_mechanism :
     moved (t12 * t02 * t01⁻¹) = 2 ∧ moved (t12 * t02) = 3 ∧ moved (t02 * t01) = 3 ∧
       moved (t01 * t12) = 3 := by decide
 
-/-! ## Theorem 8: the displacement Gram and the cycle Laplacian -/
+/-! ## Theorem 13: the displacement Gram and the cycle Laplacian -/
 
 /-- The displacement `e_{π(i)} − e_i` of point `i`. -/
 def disp {n : ℕ} (π : Perm (Fin n)) (i : Fin n) : Fin n → ℤ :=
@@ -1304,7 +1304,7 @@ theorem delta_prod {n : ℕ} (a b : Fin n) :
     simp [ht]
   · simp
 
-/-- **Theorem 8.** `⟨e_{π i} − e_i, e_{π j} − e_j⟩ = 2[i = j] − [π i = j] − [π j = i]`, i.e.
+/-- **Theorem 13.** `⟨e_{π i} − e_i, e_{π j} − e_j⟩ = 2[i = j] − [π i = j] − [π j = i]`, i.e.
 the matrix of these inner products is `2I − A` for the adjacency `A` of the cycle graph of `π`,
 the Laplacian of that graph; the Gram matrix normalised by `½` is half of it. -/
 theorem disp_gram {n : ℕ} (π : Perm (Fin n)) (i j : Fin n) :
@@ -1330,7 +1330,7 @@ theorem disp_gram {n : ℕ} (π : Perm (Fin n)) (i j : Fin n) :
     by_cases h2 : π i = j <;> by_cases h3 : i = π j <;>
       simp [hij, h1, h2, h3, eq_comm] <;> omega
 
-/-- **Theorem 8, cycle spectrum.** The identity `2 − 2cos 2x = 4 sin² x`, which rewrites the
+/-- **Theorem 13, cycle spectrum.** The identity `2 − 2cos 2x = 4 sin² x`, which rewrites the
 Laplacian eigenvalue `2 − 2cos(2πj/ℓ)` of `C_ℓ` (cited, not proved here) as `4 sin²(πj/ℓ)`. -/
 theorem cycle_laplacian_eigen (x : ℝ) : 2 - 2 * Real.cos (2 * x) = 4 * Real.sin x ^ 2 := by
   rw [Real.cos_two_mul]

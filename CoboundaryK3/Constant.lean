@@ -47,7 +47,7 @@ theorem moved_one : moved (1 : S3) = 0 := by decide
 /-! ## Gauge distance and the coboundary constant -/
 
 /-- The **gauge distance** of a cochain: the minimum of `cost α β` over every gauge
-`β : Fin k → Sym(3)`. This is the paper's `D` (Appendix B), the Hamming distance of `α` from
+`β : Fin k → Sym(3)`. This is the paper's `D` (Section 1), the Hamming distance of `α` from
 the `Sym(3)`-valued coboundaries. -/
 def gaugeDist (α : Fin k → Fin k → S3) : ℕ :=
   Finset.univ.inf' Finset.univ_nonempty (cost α)
@@ -215,7 +215,7 @@ theorem gaugeDist_w7 : gaugeDist w7 = 12 := gaugeDist_eq_of witness_k7.2.1 _ wit
 /-- The `k = 8` witness has gauge distance exactly `27`. -/
 theorem gaugeDist_w8 : gaugeDist w8 = 27 := gaugeDist_eq_of witness_k8.2.1 _ witness_k8.2.2.1
 
-/-- **Theorem 3, upper half, k = 4.** `h₁(K_4) ≤ 4/3`, from the witness `w4` (`N = 8`,
+/-- **Theorem 4, upper half, k = 4.** `h₁(K_4) ≤ 4/3`, from the witness `w4` (`N = 8`,
 `D = 6`). -/
 theorem h1_le_k4 : h1 4 ≤ 4 / 3 := by
   have h := h1_le_of_pos (α := w4) (by rw [gaugeDist_w4]; all_goals norm_num)
@@ -223,7 +223,7 @@ theorem h1_le_k4 : h1 4 ≤ 4 / 3 := by
   calc h1 4 ≤ ((8 : ℕ) : ℝ) / ((6 : ℕ) : ℝ) := h
     _ = 4 / 3 := by norm_num
 
-/-- **Theorem 3, upper half, k = 5.** `h₁(K_5) ≤ 5/3`, from the witness `w5` (`N = 10`,
+/-- **Theorem 4, upper half, k = 5.** `h₁(K_5) ≤ 5/3`, from the witness `w5` (`N = 10`,
 `D = 6`). -/
 theorem h1_le_k5 : h1 5 ≤ 5 / 3 := by
   have h := h1_le_of_pos (α := w5) (by rw [gaugeDist_w5]; all_goals norm_num)
@@ -231,7 +231,7 @@ theorem h1_le_k5 : h1 5 ≤ 5 / 3 := by
   calc h1 5 ≤ ((10 : ℕ) : ℝ) / ((6 : ℕ) : ℝ) := h
     _ = 5 / 3 := by norm_num
 
-/-- **Theorem 3, upper half, k = 6.** `h₁(K_6) ≤ 6/3`, from the witness `w6` (`N = 36`,
+/-- **Theorem 4, upper half, k = 6.** `h₁(K_6) ≤ 6/3`, from the witness `w6` (`N = 36`,
 `D = 18`). -/
 theorem h1_le_k6 : h1 6 ≤ 6 / 3 := by
   have h := h1_le_of_pos (α := w6) (by rw [gaugeDist_w6]; all_goals norm_num)
@@ -239,7 +239,7 @@ theorem h1_le_k6 : h1 6 ≤ 6 / 3 := by
   calc h1 6 ≤ ((36 : ℕ) : ℝ) / ((18 : ℕ) : ℝ) := h
     _ = 6 / 3 := by norm_num
 
-/-- **Theorem 3, upper half, k = 7.** `h₁(K_7) ≤ 7/3`, from the witness `w7` (`N = 28`,
+/-- **Theorem 4, upper half, k = 7.** `h₁(K_7) ≤ 7/3`, from the witness `w7` (`N = 28`,
 `D = 12`). -/
 theorem h1_le_k7 : h1 7 ≤ 7 / 3 := by
   have h := h1_le_of_pos (α := w7) (by rw [gaugeDist_w7]; all_goals norm_num)
@@ -247,7 +247,7 @@ theorem h1_le_k7 : h1 7 ≤ 7 / 3 := by
   calc h1 7 ≤ ((28 : ℕ) : ℝ) / ((12 : ℕ) : ℝ) := h
     _ = 7 / 3 := by norm_num
 
-/-- **Theorem 3, upper half, k = 8.** `h₁(K_8) ≤ 8/3`, from the witness `w8` (`N = 72`,
+/-- **Theorem 4, upper half, k = 8.** `h₁(K_8) ≤ 8/3`, from the witness `w8` (`N = 72`,
 `D = 27`). -/
 theorem h1_le_k8 : h1 8 ≤ 8 / 3 := by
   have h := h1_le_of_pos (α := w8) (by rw [gaugeDist_w8]; all_goals norm_num)
@@ -412,37 +412,37 @@ theorem k_div_three_le_h1 (hne : ∃ α : Fin k → Fin k → S3, 0 < gaugeDist 
 
 /-! ## The value: `h₁(K_k) = k/3` for `4 ≤ k ≤ 8` -/
 
-/-- **Theorem 3, k = 4.** `h₁(K_4) = 4/3`. -/
+/-- **Theorem 4, k = 4.** `h₁(K_4) = 4/3`. -/
 theorem h1_eq_k4 : h1 4 = 4 / 3 := by
   apply le_antisymm h1_le_k4
   have h := k_div_three_le_h1 (k := 4) ⟨w4, by rw [gaugeDist_w4]; all_goals norm_num⟩
   exact_mod_cast h
 
-/-- **Theorem 3, k = 5.** `h₁(K_5) = 5/3`. -/
+/-- **Theorem 4, k = 5.** `h₁(K_5) = 5/3`. -/
 theorem h1_eq_k5 : h1 5 = 5 / 3 := by
   apply le_antisymm h1_le_k5
   have h := k_div_three_le_h1 (k := 5) ⟨w5, by rw [gaugeDist_w5]; all_goals norm_num⟩
   exact_mod_cast h
 
-/-- **Theorem 3, k = 6.** `h₁(K_6) = 6/3 = 2`. -/
+/-- **Theorem 4, k = 6.** `h₁(K_6) = 6/3 = 2`. -/
 theorem h1_eq_k6 : h1 6 = 6 / 3 := by
   apply le_antisymm h1_le_k6
   have h := k_div_three_le_h1 (k := 6) ⟨w6, by rw [gaugeDist_w6]; all_goals norm_num⟩
   exact_mod_cast h
 
-/-- **Theorem 3, k = 7.** `h₁(K_7) = 7/3`. -/
+/-- **Theorem 4, k = 7.** `h₁(K_7) = 7/3`. -/
 theorem h1_eq_k7 : h1 7 = 7 / 3 := by
   apply le_antisymm h1_le_k7
   have h := k_div_three_le_h1 (k := 7) ⟨w7, by rw [gaugeDist_w7]; all_goals norm_num⟩
   exact_mod_cast h
 
-/-- **Theorem 3, k = 8.** `h₁(K_8) = 8/3`. -/
+/-- **Theorem 4, k = 8.** `h₁(K_8) = 8/3`. -/
 theorem h1_eq_k8 : h1 8 = 8 / 3 := by
   apply le_antisymm h1_le_k8
   have h := k_div_three_le_h1 (k := 8) ⟨w8, by rw [gaugeDist_w8]; all_goals norm_num⟩
   exact_mod_cast h
 
-/-- **Theorem 3.** `h₁(K_k) = k/3` for `k = 4, 5, 6, 7, 8`. -/
+/-- **Theorem 4.** `h₁(K_k) = k/3` for `k = 4, 5, 6, 7, 8`. -/
 theorem h1_eq_k_div_three : ∀ k ∈ ({4, 5, 6, 7, 8} : Finset ℕ), h1 k = (k : ℝ) / 3 := by
   intro k hk
   simp only [Finset.mem_insert, Finset.mem_singleton] at hk

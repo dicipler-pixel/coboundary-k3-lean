@@ -32,19 +32,19 @@ double count gives `k/3 ≤ h1 k`, and together `h1 k = k/3` for `k = 4, …, 8`
 
 | Paper | Result | Theorem |
 | :--- | :--- | :--- |
-| Theorem 3, `k = 4` | Witness: defect `N = 8`; every gauge costs `≥ 6`; `6` attained; `N/D = 4/3` | `witness_k4` |
-| Theorem 3, `k = 5` | `N = 10`, `D = 6`, `N/D = 5/3` | `witness_k5` |
-| Theorem 3, `k = 6` | `N = 36`, `D = 18`, `N/D = 2` | `witness_k6` |
-| Theorem 3, `k = 7` | `N = 28`, `D = 12`, `N/D = 7/3` | `witness_k7` |
-| Theorem 3, `k = 8` | `N = 72`, `D = 27`, `N/D = 8/3`; the residual has twelve transpositions and one 3-cycle | `witness_k8` |
-| Sec. 3.1 | Exhausting gauges with `β(0) = 1` loses nothing: a constant right factor conjugates every edge term, and the Hamming count is conjugation-invariant | `moved_conj`, `cost_mul_const`, `gauge_lower`, `gauge_lower'`, `gauge_lower_bb` |
-| Sec. 3.1 | The branch-and-bound search used for `k = 6, 7, 8` is sound: once the cost of the assigned edges reaches `D`, every completion does | `pcost_mono`, `search_sound`, `search_step`, `search_split`, `pcost_ofFn` |
-| Prop. 4 | Around the `k = 4` witness triangle the three distinct transpositions compose to a transposition (`t₁₂ t₀₂ t₀₁⁻¹`), while each adjacent product is a 3-cycle | `k4_mechanism` |
-| Theorem 3 | `h₁(K_k) = k/3` for `k = 4, …, 8`: the coboundary constant, defined as the infimum of `N/D` over every `Sym(3)`-valued non-coboundary, equals `k/3` | `h1_eq_k4`, `h1_eq_k5`, `h1_eq_k6`, `h1_eq_k7`, `h1_eq_k8`, `h1_eq_k_div_three` |
-| Theorem 3, upper half | `h₁(K_k) ≤ k/3` from each witness, whose gauge distance is exactly `D` | `h1_le_k4` … `h1_le_k8`, `gaugeDist_w4` … `gaugeDist_w8`, `h1_le_of_pos` |
+| Theorem 4, `k = 4` | Witness: defect `N = 8`; every gauge costs `≥ 6`; `6` attained; `N/D = 4/3` | `witness_k4` |
+| Theorem 4, `k = 5` | `N = 10`, `D = 6`, `N/D = 5/3` | `witness_k5` |
+| Theorem 4, `k = 6` | `N = 36`, `D = 18`, `N/D = 2` | `witness_k6` |
+| Theorem 4, `k = 7` | `N = 28`, `D = 12`, `N/D = 7/3` | `witness_k7` |
+| Theorem 4, `k = 8` | `N = 72`, `D = 27`, `N/D = 8/3`; the residual has twelve transpositions and one 3-cycle | `witness_k8` |
+| Theorem 4 (proof) | Exhausting gauges with `β(0) = 1` loses nothing: a constant right factor conjugates every edge term, and the Hamming count is conjugation-invariant | `moved_conj`, `cost_mul_const`, `gauge_lower`, `gauge_lower'`, `gauge_lower_bb` |
+| Sec. 3.3, Sec. 6 | The branch-and-bound search used for `k = 6, 7, 8` is sound: once the cost of the assigned edges reaches `D`, every completion does | `pcost_mono`, `search_sound`, `search_step`, `search_split`, `pcost_ofFn` |
+| Prop. 5 | Around the `k = 4` witness triangle the three distinct transpositions compose to a transposition (`t₁₂ t₀₂ t₀₁⁻¹`), while each adjacent product is a 3-cycle | `k4_mechanism` |
+| Theorem 4 | `h₁(K_k) = k/3` for `k = 4, …, 8`: the coboundary constant, defined as the infimum of `N/D` over every `Sym(3)`-valued non-coboundary, equals `k/3` | `h1_eq_k4`, `h1_eq_k5`, `h1_eq_k6`, `h1_eq_k7`, `h1_eq_k8`, `h1_eq_k_div_three` |
+| Theorem 4, upper half | `h₁(K_k) ≤ k/3` from each witness, whose gauge distance is exactly `D` | `h1_le_k4` … `h1_le_k8`, `gaugeDist_w4` … `gaugeDist_w8`, `h1_le_of_pos` |
 | Prop. 1 (lower half) | The star gauges cost `3N` in total, so `k · D ≤ 3N` for every cochain and `k/3 ≤ h₁(K_k)` whenever a non-coboundary exists | `star_gauge_sum`, `gaugeDist_mul_le`, `k_div_three_le_h1` |
 | Definitions | `gaugeDist` is the minimum gauge cost, attained, and zero exactly on coboundaries; `h1` is the infimum of `N/D` over non-coboundaries, and is `≥ 0` | `gaugeDist_le`, `exists_cost_eq_gaugeDist`, `le_gaugeDist`, `gaugeDist_eq_zero_iff`, `cost_eq_zero_iff`, `h1_nonneg` |
-| Theorem 8 | `⟨e_{πi}−e_i, e_{πj}−e_j⟩ = 2[i=j] − [πi=j] − [πj=i]`: these inner products are the entries of `2I − A`, the Laplacian of the cycle graph of `π`, so the Gram matrix normalised by `½` is half that Laplacian; and the identity `2 − 2cos 2x = 4 sin² x` that rewrites the cycle eigenvalues (the eigenvalues themselves are cited) | `delta_prod`, `disp_gram`, `cycle_laplacian_eigen` |
+| Theorem 13 | `⟨e_{πi}−e_i, e_{πj}−e_j⟩ = 2[i=j] − [πi=j] − [πj=i]`: these inner products are the entries of `2I − A`, the Laplacian of the cycle graph of `π`, so the Gram matrix normalised by `½` is half that Laplacian; and the identity `2 − 2cos 2x = 4 sin² x` that rewrites the cycle eigenvalues (the eigenvalues themselves are cited) | `delta_prod`, `disp_gram`, `cycle_laplacian_eigen` |
 
 The witnesses are in [`CoboundaryK3/Basic.lean`](CoboundaryK3/Basic.lean); the constant, its
 definition and both bounds are in [`CoboundaryK3/Constant.lean`](CoboundaryK3/Constant.lean),
