@@ -336,7 +336,8 @@ theorem star_point (α : Fin k → Fin k → S3) (x u v : Fin k) :
         ite_eq_right (fun h : u < x ∧ x < v => lt_asymm hxu h.1),
         ite_eq_right (fun h : u < v ∧ v < x => lt_asymm hxv h.2), add_zero]
     · rw [hxu, star_left α huv]
-      simp only [ite_eq_left huv, moved_one, ite_eq_right (fun h : u < u ∧ u < v => lt_irrefl u h.1),
+      simp only [ite_eq_left huv, moved_one,
+        ite_eq_right (fun h : u < u ∧ u < v => lt_irrefl u h.1),
         ite_eq_right (fun h : u < v ∧ v < u => lt_asymm huv h.2), add_zero]
     · rcases lt_trichotomy x v with hxv | hxv | hxv
       · rw [star_hol α huv hxu.ne' hxv.ne, moved_hol_swap α hxu.ne' huv.ne hxv.ne']
@@ -344,7 +345,8 @@ theorem star_point (α : Fin k → Fin k → S3) (x u v : Fin k) :
           ite_eq_left (And.intro hxu hxv), ite_eq_right (fun h : u < v ∧ v < x => lt_asymm hxv h.2),
           zero_add, add_zero]
       · rw [hxv, star_right α huv]
-        simp only [ite_eq_left huv, moved_one, ite_eq_right (fun h : v < u ∧ u < v => lt_asymm huv h.1),
+        simp only [ite_eq_left huv, moved_one,
+          ite_eq_right (fun h : v < u ∧ u < v => lt_asymm huv h.1),
           ite_eq_right (fun h : u < v ∧ v < v => lt_irrefl v h.2), add_zero]
       · rw [star_hol α huv hxu.ne' hxv.ne', moved_hol_rot α x u v]
         simp only [ite_eq_left huv, ite_eq_right (fun h : x < u ∧ u < v => lt_asymm hxu h.1),

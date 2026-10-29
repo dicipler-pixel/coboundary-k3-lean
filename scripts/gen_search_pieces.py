@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
 # SCRIPT: GEN-SEARCH-PIECES-01
-"""Regenerate the k = 7 and k = 8 branch-and-bound pieces of CoboundaryK3/Basic.lean.
+"""Regenerate the k = 6, 7 and 8 branch-and-bound pieces of CoboundaryK3/Basic.lean.
 
-The exhaustions for k = 7 and k = 8 are split by the gauge on the first vertices into
-kernel-checked leaves (36 for k = 7, 216 for k = 8), assembled by `search_split` into nodes and
-a root. Those 300-odd theorem blocks are machine-made; this script is the machine.
+The exhaustions for k = 6, 7 and 8 are split by the gauge on the first vertices into
+kernel-checked leaves (6 for k = 6, 36 for k = 7, 216 for k = 8), assembled by `search_split`
+into nodes and a root. Those 300-odd theorem blocks are machine-made; this script is the machine.
 
 Usage:
     python3 scripts/gen_search_pieces.py           print the block to stdout
@@ -12,11 +12,11 @@ Usage:
     python3 scripts/gen_search_pieces.py --write   replace the block in Basic.lean
 
 Why `--check` proves what it claims. The block sits in Basic.lean between two fixed lines: the
-section comment that opens it and the docstring of `witness_k7` that follows it. `--check` cuts
+section comment that opens it and the docstring of `witness_k6` that follows it. `--check` cuts
 out exactly the text between them and compares it, character for character, with the text this
 script generates from the four parameters below (witness, bound `D`, number of vertices, split
 depth). Equality shows that the committed pieces are the complete, regular split the parameters
-describe: every prefix `[1, a, b]` (k = 7) or `[1, a, b, c]` (k = 8) over the six elements of
+describe: every prefix `[1, a]` (k = 6), `[1, a, b]` (k = 7) or `[1, a, b, c]` (k = 8) over the six elements of
 Sym(3), each node assembling its six children in `S3list` order, nothing missing, duplicated or
 edited by hand. It does not check the proofs themselves; the Lean kernel does that in CI. A
 difference in one character, an extra or missing piece, or a moved marker makes it fail.
@@ -29,12 +29,37 @@ import sys
 ROOT = pathlib.Path(__file__).resolve().parents[1]
 BASIC = ROOT / "CoboundaryK3" / "Basic.lean"
 ELEMS = ["1", "t01", "t12", "t02", "c1", "c2"]  # the order of `S3list`
-START = "/-! ### The k = 7 and k = 8 exhaustions, split by the gauge on the first vertices -/\n\n"
-END = "\n\n/-- **Theorem 3, k = 7.**"
+START = "/-! ### The k = 6, 7 and 8 exhaustions, split by the gauge on the first vertices -/\n\n"
+END = "\n\n/-- **Theorem 3, k = 6.**"
 LEAF_FUEL = 4  # vertices left to assign in every leaf
 
 # (name, witness, D, number of vertices k, number of fixed vertices after vertex 0 in a leaf)
-CASES = [("k7", "w7", 12, 7, 2), ("k8", "w8", 27, 8, 3)]
+CASES = [("k6", "w6", 18, 6, 1), ("k7", "w7", 12, 7, 2), ("k8", "w8", 27, 8, 3)]
+
+
+WIDTH = 100  # Mathlib's line-length limit
+
+
+def wrap(term: str) -> str:
+    """Indent a proof term by two spaces, breaking at spaces (outside brackets) before WIDTH."""
+    words, depth, cur = [], 0, ""
+    for ch in term:
+        if ch == " " and depth == 0:
+            words.append(cur)
+            cur = ""
+            continue
+        depth += (ch == "[") - (ch == "]")
+        cur += ch
+    words.append(cur)
+    lines, line = [], "  " + words[0]
+    for w in words[1:]:
+        if len(line) + 1 + len(w) > WIDTH:
+            lines.append(line)
+            line = "    " + w
+        else:
+            line += " " + w
+    lines.append(line)
+    return "\n".join(lines)
 
 
 def prefix(idx: tuple[int, ...]) -> str:
@@ -68,7 +93,7 @@ def block_for(name: str, w: str, d: int, k: int, depth: int) -> list[str]:
             label = f"{name}_node{suffix(idx)}" if level > 0 else f"{name}_root"
             pieces.append(
                 f"private theorem {label} : search {w} {d} {fuel} {prefix(idx)} = true :=\n"
-                f"  search_split {w} {d} {fuel - 1} {prefix(idx)} {children}")
+                + wrap(f"search_split {w} {d} {fuel - 1} {prefix(idx)} {children}"))
     return pieces
 
 

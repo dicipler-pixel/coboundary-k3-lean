@@ -21,7 +21,7 @@ jobs:
         with:
           persist-credentials: false
 
-      - name: The k = 7 and k = 8 search pieces match their generator
+      - name: The k = 6, 7 and 8 search pieces match their generator
         run: python3 scripts/gen_search_pieces.py --check
 
       - name: Free disk space (the full Mathlib cache is several GB)
