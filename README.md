@@ -50,11 +50,11 @@ The witnesses are in [`CoboundaryK3/Basic.lean`](CoboundaryK3/Basic.lean); the c
 definition and both bounds are in [`CoboundaryK3/Constant.lean`](CoboundaryK3/Constant.lean),
 which uses only the five witness theorems, not their exhaustions. The exhaustions run in the
 Lean kernel (`decide +kernel`), not in compiled code: no `native_decide`, and the axiom audit
-still passes. For `k = 7` and `k = 8` the search is split by the gauge on the first vertices
-(36 and 216 kernel-checked pieces), and the pieces are assembled by `search_split`. The full
+still passes. For `k = 6`, `7` and `8` the search is split by the gauge on the first vertices
+(6, 36 and 216 kernel-checked leaves), and the pieces are assembled by `search_split`. The full
 check takes about twenty minutes. What is not proved is in [`LIMITATIONS.md`](LIMITATIONS.md).
 
-The 302 `k = 7` and `k = 8` pieces (leaves, nodes and roots) are machine-made by
+The 309 `k = 6`, `7` and `8` pieces (leaves, nodes and roots) are machine-made by
 [`scripts/gen_search_pieces.py`](scripts/gen_search_pieces.py): run it to print them,
 `--write` to regenerate them in `Basic.lean`, and `--check` to confirm the file holds exactly
 the generated text. The proof check runs `--check` first, so a hand edit to a piece fails CI.
