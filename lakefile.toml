@@ -9,7 +9,7 @@ rev = "v4.34.1"
 
 [[lean_lib]]
 name = "CoboundaryK3"
-roots = ["CoboundaryK3.Basic", "CoboundaryK3.Constant"]
+roots = ["CoboundaryK3.Basic", "CoboundaryK3.Constant", "CoboundaryK3.Replication"]
 
 [leanOptions]
 relaxedAutoImplicit = false

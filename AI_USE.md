@@ -2,7 +2,9 @@
 
 The research questions and the physics behind this library are Jeromie
 Beasley's. AI tools (Claude and ChatGPT) were used to search the literature,
-write and repair Lean proofs, and organise this repository.
+write and repair Lean proofs, and organise this repository. The structure of
+the replication module (`CoboundaryK3/Replication.lean`) was drafted by Grok
+(xAI) and completed with Claude.
 
 No statement here rests on an AI's say-so. Every proof is checked by the Lean
 kernel and replayed by an independent kernel checker on every push, every
