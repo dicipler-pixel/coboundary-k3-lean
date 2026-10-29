@@ -57,7 +57,6 @@ def block_for(name: str, w: str, d: int, k: int, depth: int) -> list[str]:
     pieces = []
     for idx in tuples(depth):
         pieces.append(
-            "set_option maxHeartbeats 0 in\n"
             f"private theorem {name}_leaf{suffix(idx)} : "
             f"search {w} {d} {LEAF_FUEL} {prefix(idx)} = true := by\n"
             "  decide +kernel")

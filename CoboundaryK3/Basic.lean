@@ -16,7 +16,10 @@ This file proves, for each witness of Appendix A, the defect `N`, that no gauge 
 The gauge minimum is checked by exhausting every gauge with `β(0) = 1`; `gauge_lower` proves that
 this loses nothing, because right multiplication by a constant conjugates every edge term.
 -/
-import Mathlib
+import Mathlib.Analysis.SpecialFunctions.Trigonometric.Basic
+import Mathlib.Data.Fintype.Perm
+import Mathlib.Data.Fintype.Pi
+import Mathlib.Algebra.BigOperators.Fin
 
 namespace CoboundaryK3
 
@@ -283,7 +286,6 @@ theorem witness_k5 :
     defect w5 = 10 ∧ (∀ β, 6 ≤ cost w5 β) ∧ cost w5 (fun _ => 1) = 6 ∧ 10 * 3 = 5 * 6 :=
   ⟨by decide +kernel, gauge_lower w5 6 (by decide +kernel), by decide +kernel, by norm_num⟩
 
-set_option maxHeartbeats 0 in
 /-- **Theorem 3, k = 6.** `N = 36`, `D = 18`: `N/D = 2 = 6/3`. -/
 theorem witness_k6 :
     defect w6 = 36 ∧ (∀ β, 18 ≤ cost w6 β) ∧ cost w6 (fun _ => 1) = 18 ∧ 36 * 3 = 6 * 18 :=
@@ -291,147 +293,111 @@ theorem witness_k6 :
 
 /-! ### The k = 7 and k = 8 exhaustions, split by the gauge on the first vertices -/
 
-set_option maxHeartbeats 0 in
 private theorem k7_leaf_0_0 : search w7 12 4 [1, 1, 1] = true := by
   decide +kernel
 
-set_option maxHeartbeats 0 in
 private theorem k7_leaf_0_1 : search w7 12 4 [1, 1, t01] = true := by
   decide +kernel
 
-set_option maxHeartbeats 0 in
 private theorem k7_leaf_0_2 : search w7 12 4 [1, 1, t12] = true := by
   decide +kernel
 
-set_option maxHeartbeats 0 in
 private theorem k7_leaf_0_3 : search w7 12 4 [1, 1, t02] = true := by
   decide +kernel
 
-set_option maxHeartbeats 0 in
 private theorem k7_leaf_0_4 : search w7 12 4 [1, 1, c1] = true := by
   decide +kernel
 
-set_option maxHeartbeats 0 in
 private theorem k7_leaf_0_5 : search w7 12 4 [1, 1, c2] = true := by
   decide +kernel
 
-set_option maxHeartbeats 0 in
 private theorem k7_leaf_1_0 : search w7 12 4 [1, t01, 1] = true := by
   decide +kernel
 
-set_option maxHeartbeats 0 in
 private theorem k7_leaf_1_1 : search w7 12 4 [1, t01, t01] = true := by
   decide +kernel
 
-set_option maxHeartbeats 0 in
 private theorem k7_leaf_1_2 : search w7 12 4 [1, t01, t12] = true := by
   decide +kernel
 
-set_option maxHeartbeats 0 in
 private theorem k7_leaf_1_3 : search w7 12 4 [1, t01, t02] = true := by
   decide +kernel
 
-set_option maxHeartbeats 0 in
 private theorem k7_leaf_1_4 : search w7 12 4 [1, t01, c1] = true := by
   decide +kernel
 
-set_option maxHeartbeats 0 in
 private theorem k7_leaf_1_5 : search w7 12 4 [1, t01, c2] = true := by
   decide +kernel
 
-set_option maxHeartbeats 0 in
 private theorem k7_leaf_2_0 : search w7 12 4 [1, t12, 1] = true := by
   decide +kernel
 
-set_option maxHeartbeats 0 in
 private theorem k7_leaf_2_1 : search w7 12 4 [1, t12, t01] = true := by
   decide +kernel
 
-set_option maxHeartbeats 0 in
 private theorem k7_leaf_2_2 : search w7 12 4 [1, t12, t12] = true := by
   decide +kernel
 
-set_option maxHeartbeats 0 in
 private theorem k7_leaf_2_3 : search w7 12 4 [1, t12, t02] = true := by
   decide +kernel
 
-set_option maxHeartbeats 0 in
 private theorem k7_leaf_2_4 : search w7 12 4 [1, t12, c1] = true := by
   decide +kernel
 
-set_option maxHeartbeats 0 in
 private theorem k7_leaf_2_5 : search w7 12 4 [1, t12, c2] = true := by
   decide +kernel
 
-set_option maxHeartbeats 0 in
 private theorem k7_leaf_3_0 : search w7 12 4 [1, t02, 1] = true := by
   decide +kernel
 
-set_option maxHeartbeats 0 in
 private theorem k7_leaf_3_1 : search w7 12 4 [1, t02, t01] = true := by
   decide +kernel
 
-set_option maxHeartbeats 0 in
 private theorem k7_leaf_3_2 : search w7 12 4 [1, t02, t12] = true := by
   decide +kernel
 
-set_option maxHeartbeats 0 in
 private theorem k7_leaf_3_3 : search w7 12 4 [1, t02, t02] = true := by
   decide +kernel
 
-set_option maxHeartbeats 0 in
 private theorem k7_leaf_3_4 : search w7 12 4 [1, t02, c1] = true := by
   decide +kernel
 
-set_option maxHeartbeats 0 in
 private theorem k7_leaf_3_5 : search w7 12 4 [1, t02, c2] = true := by
   decide +kernel
 
-set_option maxHeartbeats 0 in
 private theorem k7_leaf_4_0 : search w7 12 4 [1, c1, 1] = true := by
   decide +kernel
 
-set_option maxHeartbeats 0 in
 private theorem k7_leaf_4_1 : search w7 12 4 [1, c1, t01] = true := by
   decide +kernel
 
-set_option maxHeartbeats 0 in
 private theorem k7_leaf_4_2 : search w7 12 4 [1, c1, t12] = true := by
   decide +kernel
 
-set_option maxHeartbeats 0 in
 private theorem k7_leaf_4_3 : search w7 12 4 [1, c1, t02] = true := by
   decide +kernel
 
-set_option maxHeartbeats 0 in
 private theorem k7_leaf_4_4 : search w7 12 4 [1, c1, c1] = true := by
   decide +kernel
 
-set_option maxHeartbeats 0 in
 private theorem k7_leaf_4_5 : search w7 12 4 [1, c1, c2] = true := by
   decide +kernel
 
-set_option maxHeartbeats 0 in
 private theorem k7_leaf_5_0 : search w7 12 4 [1, c2, 1] = true := by
   decide +kernel
 
-set_option maxHeartbeats 0 in
 private theorem k7_leaf_5_1 : search w7 12 4 [1, c2, t01] = true := by
   decide +kernel
 
-set_option maxHeartbeats 0 in
 private theorem k7_leaf_5_2 : search w7 12 4 [1, c2, t12] = true := by
   decide +kernel
 
-set_option maxHeartbeats 0 in
 private theorem k7_leaf_5_3 : search w7 12 4 [1, c2, t02] = true := by
   decide +kernel
 
-set_option maxHeartbeats 0 in
 private theorem k7_leaf_5_4 : search w7 12 4 [1, c2, c1] = true := by
   decide +kernel
 
-set_option maxHeartbeats 0 in
 private theorem k7_leaf_5_5 : search w7 12 4 [1, c2, c2] = true := by
   decide +kernel
 
@@ -456,867 +422,651 @@ private theorem k7_node_5 : search w7 12 5 [1, c2] = true :=
 private theorem k7_root : search w7 12 6 [1] = true :=
   search_split w7 12 5 [1] k7_node_0 k7_node_1 k7_node_2 k7_node_3 k7_node_4 k7_node_5
 
-set_option maxHeartbeats 0 in
 private theorem k8_leaf_0_0_0 : search w8 27 4 [1, 1, 1, 1] = true := by
   decide +kernel
 
-set_option maxHeartbeats 0 in
 private theorem k8_leaf_0_0_1 : search w8 27 4 [1, 1, 1, t01] = true := by
   decide +kernel
 
-set_option maxHeartbeats 0 in
 private theorem k8_leaf_0_0_2 : search w8 27 4 [1, 1, 1, t12] = true := by
   decide +kernel
 
-set_option maxHeartbeats 0 in
 private theorem k8_leaf_0_0_3 : search w8 27 4 [1, 1, 1, t02] = true := by
   decide +kernel
 
-set_option maxHeartbeats 0 in
 private theorem k8_leaf_0_0_4 : search w8 27 4 [1, 1, 1, c1] = true := by
   decide +kernel
 
-set_option maxHeartbeats 0 in
 private theorem k8_leaf_0_0_5 : search w8 27 4 [1, 1, 1, c2] = true := by
   decide +kernel
 
-set_option maxHeartbeats 0 in
 private theorem k8_leaf_0_1_0 : search w8 27 4 [1, 1, t01, 1] = true := by
   decide +kernel
 
-set_option maxHeartbeats 0 in
 private theorem k8_leaf_0_1_1 : search w8 27 4 [1, 1, t01, t01] = true := by
   decide +kernel
 
-set_option maxHeartbeats 0 in
 private theorem k8_leaf_0_1_2 : search w8 27 4 [1, 1, t01, t12] = true := by
   decide +kernel
 
-set_option maxHeartbeats 0 in
 private theorem k8_leaf_0_1_3 : search w8 27 4 [1, 1, t01, t02] = true := by
   decide +kernel
 
-set_option maxHeartbeats 0 in
 private theorem k8_leaf_0_1_4 : search w8 27 4 [1, 1, t01, c1] = true := by
   decide +kernel
 
-set_option maxHeartbeats 0 in
 private theorem k8_leaf_0_1_5 : search w8 27 4 [1, 1, t01, c2] = true := by
   decide +kernel
 
-set_option maxHeartbeats 0 in
 private theorem k8_leaf_0_2_0 : search w8 27 4 [1, 1, t12, 1] = true := by
   decide +kernel
 
-set_option maxHeartbeats 0 in
 private theorem k8_leaf_0_2_1 : search w8 27 4 [1, 1, t12, t01] = true := by
   decide +kernel
 
-set_option maxHeartbeats 0 in
 private theorem k8_leaf_0_2_2 : search w8 27 4 [1, 1, t12, t12] = true := by
   decide +kernel
 
-set_option maxHeartbeats 0 in
 private theorem k8_leaf_0_2_3 : search w8 27 4 [1, 1, t12, t02] = true := by
   decide +kernel
 
-set_option maxHeartbeats 0 in
 private theorem k8_leaf_0_2_4 : search w8 27 4 [1, 1, t12, c1] = true := by
   decide +kernel
 
-set_option maxHeartbeats 0 in
 private theorem k8_leaf_0_2_5 : search w8 27 4 [1, 1, t12, c2] = true := by
   decide +kernel
 
-set_option maxHeartbeats 0 in
 private theorem k8_leaf_0_3_0 : search w8 27 4 [1, 1, t02, 1] = true := by
   decide +kernel
 
-set_option maxHeartbeats 0 in
 private theorem k8_leaf_0_3_1 : search w8 27 4 [1, 1, t02, t01] = true := by
   decide +kernel
 
-set_option maxHeartbeats 0 in
 private theorem k8_leaf_0_3_2 : search w8 27 4 [1, 1, t02, t12] = true := by
   decide +kernel
 
-set_option maxHeartbeats 0 in
 private theorem k8_leaf_0_3_3 : search w8 27 4 [1, 1, t02, t02] = true := by
   decide +kernel
 
-set_option maxHeartbeats 0 in
 private theorem k8_leaf_0_3_4 : search w8 27 4 [1, 1, t02, c1] = true := by
   decide +kernel
 
-set_option maxHeartbeats 0 in
 private theorem k8_leaf_0_3_5 : search w8 27 4 [1, 1, t02, c2] = true := by
   decide +kernel
 
-set_option maxHeartbeats 0 in
 private theorem k8_leaf_0_4_0 : search w8 27 4 [1, 1, c1, 1] = true := by
   decide +kernel
 
-set_option maxHeartbeats 0 in
 private theorem k8_leaf_0_4_1 : search w8 27 4 [1, 1, c1, t01] = true := by
   decide +kernel
 
-set_option maxHeartbeats 0 in
 private theorem k8_leaf_0_4_2 : search w8 27 4 [1, 1, c1, t12] = true := by
   decide +kernel
 
-set_option maxHeartbeats 0 in
 private theorem k8_leaf_0_4_3 : search w8 27 4 [1, 1, c1, t02] = true := by
   decide +kernel
 
-set_option maxHeartbeats 0 in
 private theorem k8_leaf_0_4_4 : search w8 27 4 [1, 1, c1, c1] = true := by
   decide +kernel
 
-set_option maxHeartbeats 0 in
 private theorem k8_leaf_0_4_5 : search w8 27 4 [1, 1, c1, c2] = true := by
   decide +kernel
 
-set_option maxHeartbeats 0 in
 private theorem k8_leaf_0_5_0 : search w8 27 4 [1, 1, c2, 1] = true := by
   decide +kernel
 
-set_option maxHeartbeats 0 in
 private theorem k8_leaf_0_5_1 : search w8 27 4 [1, 1, c2, t01] = true := by
   decide +kernel
 
-set_option maxHeartbeats 0 in
 private theorem k8_leaf_0_5_2 : search w8 27 4 [1, 1, c2, t12] = true := by
   decide +kernel
 
-set_option maxHeartbeats 0 in
 private theorem k8_leaf_0_5_3 : search w8 27 4 [1, 1, c2, t02] = true := by
   decide +kernel
 
-set_option maxHeartbeats 0 in
 private theorem k8_leaf_0_5_4 : search w8 27 4 [1, 1, c2, c1] = true := by
   decide +kernel
 
-set_option maxHeartbeats 0 in
 private theorem k8_leaf_0_5_5 : search w8 27 4 [1, 1, c2, c2] = true := by
   decide +kernel
 
-set_option maxHeartbeats 0 in
 private theorem k8_leaf_1_0_0 : search w8 27 4 [1, t01, 1, 1] = true := by
   decide +kernel
 
-set_option maxHeartbeats 0 in
 private theorem k8_leaf_1_0_1 : search w8 27 4 [1, t01, 1, t01] = true := by
   decide +kernel
 
-set_option maxHeartbeats 0 in
 private theorem k8_leaf_1_0_2 : search w8 27 4 [1, t01, 1, t12] = true := by
   decide +kernel
 
-set_option maxHeartbeats 0 in
 private theorem k8_leaf_1_0_3 : search w8 27 4 [1, t01, 1, t02] = true := by
   decide +kernel
 
-set_option maxHeartbeats 0 in
 private theorem k8_leaf_1_0_4 : search w8 27 4 [1, t01, 1, c1] = true := by
   decide +kernel
 
-set_option maxHeartbeats 0 in
 private theorem k8_leaf_1_0_5 : search w8 27 4 [1, t01, 1, c2] = true := by
   decide +kernel
 
-set_option maxHeartbeats 0 in
 private theorem k8_leaf_1_1_0 : search w8 27 4 [1, t01, t01, 1] = true := by
   decide +kernel
 
-set_option maxHeartbeats 0 in
 private theorem k8_leaf_1_1_1 : search w8 27 4 [1, t01, t01, t01] = true := by
   decide +kernel
 
-set_option maxHeartbeats 0 in
 private theorem k8_leaf_1_1_2 : search w8 27 4 [1, t01, t01, t12] = true := by
   decide +kernel
 
-set_option maxHeartbeats 0 in
 private theorem k8_leaf_1_1_3 : search w8 27 4 [1, t01, t01, t02] = true := by
   decide +kernel
 
-set_option maxHeartbeats 0 in
 private theorem k8_leaf_1_1_4 : search w8 27 4 [1, t01, t01, c1] = true := by
   decide +kernel
 
-set_option maxHeartbeats 0 in
 private theorem k8_leaf_1_1_5 : search w8 27 4 [1, t01, t01, c2] = true := by
   decide +kernel
 
-set_option maxHeartbeats 0 in
 private theorem k8_leaf_1_2_0 : search w8 27 4 [1, t01, t12, 1] = true := by
   decide +kernel
 
-set_option maxHeartbeats 0 in
 private theorem k8_leaf_1_2_1 : search w8 27 4 [1, t01, t12, t01] = true := by
   decide +kernel
 
-set_option maxHeartbeats 0 in
 private theorem k8_leaf_1_2_2 : search w8 27 4 [1, t01, t12, t12] = true := by
   decide +kernel
 
-set_option maxHeartbeats 0 in
 private theorem k8_leaf_1_2_3 : search w8 27 4 [1, t01, t12, t02] = true := by
   decide +kernel
 
-set_option maxHeartbeats 0 in
 private theorem k8_leaf_1_2_4 : search w8 27 4 [1, t01, t12, c1] = true := by
   decide +kernel
 
-set_option maxHeartbeats 0 in
 private theorem k8_leaf_1_2_5 : search w8 27 4 [1, t01, t12, c2] = true := by
   decide +kernel
 
-set_option maxHeartbeats 0 in
 private theorem k8_leaf_1_3_0 : search w8 27 4 [1, t01, t02, 1] = true := by
   decide +kernel
 
-set_option maxHeartbeats 0 in
 private theorem k8_leaf_1_3_1 : search w8 27 4 [1, t01, t02, t01] = true := by
   decide +kernel
 
-set_option maxHeartbeats 0 in
 private theorem k8_leaf_1_3_2 : search w8 27 4 [1, t01, t02, t12] = true := by
   decide +kernel
 
-set_option maxHeartbeats 0 in
 private theorem k8_leaf_1_3_3 : search w8 27 4 [1, t01, t02, t02] = true := by
   decide +kernel
 
-set_option maxHeartbeats 0 in
 private theorem k8_leaf_1_3_4 : search w8 27 4 [1, t01, t02, c1] = true := by
   decide +kernel
 
-set_option maxHeartbeats 0 in
 private theorem k8_leaf_1_3_5 : search w8 27 4 [1, t01, t02, c2] = true := by
   decide +kernel
 
-set_option maxHeartbeats 0 in
 private theorem k8_leaf_1_4_0 : search w8 27 4 [1, t01, c1, 1] = true := by
   decide +kernel
 
-set_option maxHeartbeats 0 in
 private theorem k8_leaf_1_4_1 : search w8 27 4 [1, t01, c1, t01] = true := by
   decide +kernel
 
-set_option maxHeartbeats 0 in
 private theorem k8_leaf_1_4_2 : search w8 27 4 [1, t01, c1, t12] = true := by
   decide +kernel
 
-set_option maxHeartbeats 0 in
 private theorem k8_leaf_1_4_3 : search w8 27 4 [1, t01, c1, t02] = true := by
   decide +kernel
 
-set_option maxHeartbeats 0 in
 private theorem k8_leaf_1_4_4 : search w8 27 4 [1, t01, c1, c1] = true := by
   decide +kernel
 
-set_option maxHeartbeats 0 in
 private theorem k8_leaf_1_4_5 : search w8 27 4 [1, t01, c1, c2] = true := by
   decide +kernel
 
-set_option maxHeartbeats 0 in
 private theorem k8_leaf_1_5_0 : search w8 27 4 [1, t01, c2, 1] = true := by
   decide +kernel
 
-set_option maxHeartbeats 0 in
 private theorem k8_leaf_1_5_1 : search w8 27 4 [1, t01, c2, t01] = true := by
   decide +kernel
 
-set_option maxHeartbeats 0 in
 private theorem k8_leaf_1_5_2 : search w8 27 4 [1, t01, c2, t12] = true := by
   decide +kernel
 
-set_option maxHeartbeats 0 in
 private theorem k8_leaf_1_5_3 : search w8 27 4 [1, t01, c2, t02] = true := by
   decide +kernel
 
-set_option maxHeartbeats 0 in
 private theorem k8_leaf_1_5_4 : search w8 27 4 [1, t01, c2, c1] = true := by
   decide +kernel
 
-set_option maxHeartbeats 0 in
 private theorem k8_leaf_1_5_5 : search w8 27 4 [1, t01, c2, c2] = true := by
   decide +kernel
 
-set_option maxHeartbeats 0 in
 private theorem k8_leaf_2_0_0 : search w8 27 4 [1, t12, 1, 1] = true := by
   decide +kernel
 
-set_option maxHeartbeats 0 in
 private theorem k8_leaf_2_0_1 : search w8 27 4 [1, t12, 1, t01] = true := by
   decide +kernel
 
-set_option maxHeartbeats 0 in
 private theorem k8_leaf_2_0_2 : search w8 27 4 [1, t12, 1, t12] = true := by
   decide +kernel
 
-set_option maxHeartbeats 0 in
 private theorem k8_leaf_2_0_3 : search w8 27 4 [1, t12, 1, t02] = true := by
   decide +kernel
 
-set_option maxHeartbeats 0 in
 private theorem k8_leaf_2_0_4 : search w8 27 4 [1, t12, 1, c1] = true := by
   decide +kernel
 
-set_option maxHeartbeats 0 in
 private theorem k8_leaf_2_0_5 : search w8 27 4 [1, t12, 1, c2] = true := by
   decide +kernel
 
-set_option maxHeartbeats 0 in
 private theorem k8_leaf_2_1_0 : search w8 27 4 [1, t12, t01, 1] = true := by
   decide +kernel
 
-set_option maxHeartbeats 0 in
 private theorem k8_leaf_2_1_1 : search w8 27 4 [1, t12, t01, t01] = true := by
   decide +kernel
 
-set_option maxHeartbeats 0 in
 private theorem k8_leaf_2_1_2 : search w8 27 4 [1, t12, t01, t12] = true := by
   decide +kernel
 
-set_option maxHeartbeats 0 in
 private theorem k8_leaf_2_1_3 : search w8 27 4 [1, t12, t01, t02] = true := by
   decide +kernel
 
-set_option maxHeartbeats 0 in
 private theorem k8_leaf_2_1_4 : search w8 27 4 [1, t12, t01, c1] = true := by
   decide +kernel
 
-set_option maxHeartbeats 0 in
 private theorem k8_leaf_2_1_5 : search w8 27 4 [1, t12, t01, c2] = true := by
   decide +kernel
 
-set_option maxHeartbeats 0 in
 private theorem k8_leaf_2_2_0 : search w8 27 4 [1, t12, t12, 1] = true := by
   decide +kernel
 
-set_option maxHeartbeats 0 in
 private theorem k8_leaf_2_2_1 : search w8 27 4 [1, t12, t12, t01] = true := by
   decide +kernel
 
-set_option maxHeartbeats 0 in
 private theorem k8_leaf_2_2_2 : search w8 27 4 [1, t12, t12, t12] = true := by
   decide +kernel
 
-set_option maxHeartbeats 0 in
 private theorem k8_leaf_2_2_3 : search w8 27 4 [1, t12, t12, t02] = true := by
   decide +kernel
 
-set_option maxHeartbeats 0 in
 private theorem k8_leaf_2_2_4 : search w8 27 4 [1, t12, t12, c1] = true := by
   decide +kernel
 
-set_option maxHeartbeats 0 in
 private theorem k8_leaf_2_2_5 : search w8 27 4 [1, t12, t12, c2] = true := by
   decide +kernel
 
-set_option maxHeartbeats 0 in
 private theorem k8_leaf_2_3_0 : search w8 27 4 [1, t12, t02, 1] = true := by
   decide +kernel
 
-set_option maxHeartbeats 0 in
 private theorem k8_leaf_2_3_1 : search w8 27 4 [1, t12, t02, t01] = true := by
   decide +kernel
 
-set_option maxHeartbeats 0 in
 private theorem k8_leaf_2_3_2 : search w8 27 4 [1, t12, t02, t12] = true := by
   decide +kernel
 
-set_option maxHeartbeats 0 in
 private theorem k8_leaf_2_3_3 : search w8 27 4 [1, t12, t02, t02] = true := by
   decide +kernel
 
-set_option maxHeartbeats 0 in
 private theorem k8_leaf_2_3_4 : search w8 27 4 [1, t12, t02, c1] = true := by
   decide +kernel
 
-set_option maxHeartbeats 0 in
 private theorem k8_leaf_2_3_5 : search w8 27 4 [1, t12, t02, c2] = true := by
   decide +kernel
 
-set_option maxHeartbeats 0 in
 private theorem k8_leaf_2_4_0 : search w8 27 4 [1, t12, c1, 1] = true := by
   decide +kernel
 
-set_option maxHeartbeats 0 in
 private theorem k8_leaf_2_4_1 : search w8 27 4 [1, t12, c1, t01] = true := by
   decide +kernel
 
-set_option maxHeartbeats 0 in
 private theorem k8_leaf_2_4_2 : search w8 27 4 [1, t12, c1, t12] = true := by
   decide +kernel
 
-set_option maxHeartbeats 0 in
 private theorem k8_leaf_2_4_3 : search w8 27 4 [1, t12, c1, t02] = true := by
   decide +kernel
 
-set_option maxHeartbeats 0 in
 private theorem k8_leaf_2_4_4 : search w8 27 4 [1, t12, c1, c1] = true := by
   decide +kernel
 
-set_option maxHeartbeats 0 in
 private theorem k8_leaf_2_4_5 : search w8 27 4 [1, t12, c1, c2] = true := by
   decide +kernel
 
-set_option maxHeartbeats 0 in
 private theorem k8_leaf_2_5_0 : search w8 27 4 [1, t12, c2, 1] = true := by
   decide +kernel
 
-set_option maxHeartbeats 0 in
 private theorem k8_leaf_2_5_1 : search w8 27 4 [1, t12, c2, t01] = true := by
   decide +kernel
 
-set_option maxHeartbeats 0 in
 private theorem k8_leaf_2_5_2 : search w8 27 4 [1, t12, c2, t12] = true := by
   decide +kernel
 
-set_option maxHeartbeats 0 in
 private theorem k8_leaf_2_5_3 : search w8 27 4 [1, t12, c2, t02] = true := by
   decide +kernel
 
-set_option maxHeartbeats 0 in
 private theorem k8_leaf_2_5_4 : search w8 27 4 [1, t12, c2, c1] = true := by
   decide +kernel
 
-set_option maxHeartbeats 0 in
 private theorem k8_leaf_2_5_5 : search w8 27 4 [1, t12, c2, c2] = true := by
   decide +kernel
 
-set_option maxHeartbeats 0 in
 private theorem k8_leaf_3_0_0 : search w8 27 4 [1, t02, 1, 1] = true := by
   decide +kernel
 
-set_option maxHeartbeats 0 in
 private theorem k8_leaf_3_0_1 : search w8 27 4 [1, t02, 1, t01] = true := by
   decide +kernel
 
-set_option maxHeartbeats 0 in
 private theorem k8_leaf_3_0_2 : search w8 27 4 [1, t02, 1, t12] = true := by
   decide +kernel
 
-set_option maxHeartbeats 0 in
 private theorem k8_leaf_3_0_3 : search w8 27 4 [1, t02, 1, t02] = true := by
   decide +kernel
 
-set_option maxHeartbeats 0 in
 private theorem k8_leaf_3_0_4 : search w8 27 4 [1, t02, 1, c1] = true := by
   decide +kernel
 
-set_option maxHeartbeats 0 in
 private theorem k8_leaf_3_0_5 : search w8 27 4 [1, t02, 1, c2] = true := by
   decide +kernel
 
-set_option maxHeartbeats 0 in
 private theorem k8_leaf_3_1_0 : search w8 27 4 [1, t02, t01, 1] = true := by
   decide +kernel
 
-set_option maxHeartbeats 0 in
 private theorem k8_leaf_3_1_1 : search w8 27 4 [1, t02, t01, t01] = true := by
   decide +kernel
 
-set_option maxHeartbeats 0 in
 private theorem k8_leaf_3_1_2 : search w8 27 4 [1, t02, t01, t12] = true := by
   decide +kernel
 
-set_option maxHeartbeats 0 in
 private theorem k8_leaf_3_1_3 : search w8 27 4 [1, t02, t01, t02] = true := by
   decide +kernel
 
-set_option maxHeartbeats 0 in
 private theorem k8_leaf_3_1_4 : search w8 27 4 [1, t02, t01, c1] = true := by
   decide +kernel
 
-set_option maxHeartbeats 0 in
 private theorem k8_leaf_3_1_5 : search w8 27 4 [1, t02, t01, c2] = true := by
   decide +kernel
 
-set_option maxHeartbeats 0 in
 private theorem k8_leaf_3_2_0 : search w8 27 4 [1, t02, t12, 1] = true := by
   decide +kernel
 
-set_option maxHeartbeats 0 in
 private theorem k8_leaf_3_2_1 : search w8 27 4 [1, t02, t12, t01] = true := by
   decide +kernel
 
-set_option maxHeartbeats 0 in
 private theorem k8_leaf_3_2_2 : search w8 27 4 [1, t02, t12, t12] = true := by
   decide +kernel
 
-set_option maxHeartbeats 0 in
 private theorem k8_leaf_3_2_3 : search w8 27 4 [1, t02, t12, t02] = true := by
   decide +kernel
 
-set_option maxHeartbeats 0 in
 private theorem k8_leaf_3_2_4 : search w8 27 4 [1, t02, t12, c1] = true := by
   decide +kernel
 
-set_option maxHeartbeats 0 in
 private theorem k8_leaf_3_2_5 : search w8 27 4 [1, t02, t12, c2] = true := by
   decide +kernel
 
-set_option maxHeartbeats 0 in
 private theorem k8_leaf_3_3_0 : search w8 27 4 [1, t02, t02, 1] = true := by
   decide +kernel
 
-set_option maxHeartbeats 0 in
 private theorem k8_leaf_3_3_1 : search w8 27 4 [1, t02, t02, t01] = true := by
   decide +kernel
 
-set_option maxHeartbeats 0 in
 private theorem k8_leaf_3_3_2 : search w8 27 4 [1, t02, t02, t12] = true := by
   decide +kernel
 
-set_option maxHeartbeats 0 in
 private theorem k8_leaf_3_3_3 : search w8 27 4 [1, t02, t02, t02] = true := by
   decide +kernel
 
-set_option maxHeartbeats 0 in
 private theorem k8_leaf_3_3_4 : search w8 27 4 [1, t02, t02, c1] = true := by
   decide +kernel
 
-set_option maxHeartbeats 0 in
 private theorem k8_leaf_3_3_5 : search w8 27 4 [1, t02, t02, c2] = true := by
   decide +kernel
 
-set_option maxHeartbeats 0 in
 private theorem k8_leaf_3_4_0 : search w8 27 4 [1, t02, c1, 1] = true := by
   decide +kernel
 
-set_option maxHeartbeats 0 in
 private theorem k8_leaf_3_4_1 : search w8 27 4 [1, t02, c1, t01] = true := by
   decide +kernel
 
-set_option maxHeartbeats 0 in
 private theorem k8_leaf_3_4_2 : search w8 27 4 [1, t02, c1, t12] = true := by
   decide +kernel
 
-set_option maxHeartbeats 0 in
 private theorem k8_leaf_3_4_3 : search w8 27 4 [1, t02, c1, t02] = true := by
   decide +kernel
 
-set_option maxHeartbeats 0 in
 private theorem k8_leaf_3_4_4 : search w8 27 4 [1, t02, c1, c1] = true := by
   decide +kernel
 
-set_option maxHeartbeats 0 in
 private theorem k8_leaf_3_4_5 : search w8 27 4 [1, t02, c1, c2] = true := by
   decide +kernel
 
-set_option maxHeartbeats 0 in
 private theorem k8_leaf_3_5_0 : search w8 27 4 [1, t02, c2, 1] = true := by
   decide +kernel
 
-set_option maxHeartbeats 0 in
 private theorem k8_leaf_3_5_1 : search w8 27 4 [1, t02, c2, t01] = true := by
   decide +kernel
 
-set_option maxHeartbeats 0 in
 private theorem k8_leaf_3_5_2 : search w8 27 4 [1, t02, c2, t12] = true := by
   decide +kernel
 
-set_option maxHeartbeats 0 in
 private theorem k8_leaf_3_5_3 : search w8 27 4 [1, t02, c2, t02] = true := by
   decide +kernel
 
-set_option maxHeartbeats 0 in
 private theorem k8_leaf_3_5_4 : search w8 27 4 [1, t02, c2, c1] = true := by
   decide +kernel
 
-set_option maxHeartbeats 0 in
 private theorem k8_leaf_3_5_5 : search w8 27 4 [1, t02, c2, c2] = true := by
   decide +kernel
 
-set_option maxHeartbeats 0 in
 private theorem k8_leaf_4_0_0 : search w8 27 4 [1, c1, 1, 1] = true := by
   decide +kernel
 
-set_option maxHeartbeats 0 in
 private theorem k8_leaf_4_0_1 : search w8 27 4 [1, c1, 1, t01] = true := by
   decide +kernel
 
-set_option maxHeartbeats 0 in
 private theorem k8_leaf_4_0_2 : search w8 27 4 [1, c1, 1, t12] = true := by
   decide +kernel
 
-set_option maxHeartbeats 0 in
 private theorem k8_leaf_4_0_3 : search w8 27 4 [1, c1, 1, t02] = true := by
   decide +kernel
 
-set_option maxHeartbeats 0 in
 private theorem k8_leaf_4_0_4 : search w8 27 4 [1, c1, 1, c1] = true := by
   decide +kernel
 
-set_option maxHeartbeats 0 in
 private theorem k8_leaf_4_0_5 : search w8 27 4 [1, c1, 1, c2] = true := by
   decide +kernel
 
-set_option maxHeartbeats 0 in
 private theorem k8_leaf_4_1_0 : search w8 27 4 [1, c1, t01, 1] = true := by
   decide +kernel
 
-set_option maxHeartbeats 0 in
 private theorem k8_leaf_4_1_1 : search w8 27 4 [1, c1, t01, t01] = true := by
   decide +kernel
 
-set_option maxHeartbeats 0 in
 private theorem k8_leaf_4_1_2 : search w8 27 4 [1, c1, t01, t12] = true := by
   decide +kernel
 
-set_option maxHeartbeats 0 in
 private theorem k8_leaf_4_1_3 : search w8 27 4 [1, c1, t01, t02] = true := by
   decide +kernel
 
-set_option maxHeartbeats 0 in
 private theorem k8_leaf_4_1_4 : search w8 27 4 [1, c1, t01, c1] = true := by
   decide +kernel
 
-set_option maxHeartbeats 0 in
 private theorem k8_leaf_4_1_5 : search w8 27 4 [1, c1, t01, c2] = true := by
   decide +kernel
 
-set_option maxHeartbeats 0 in
 private theorem k8_leaf_4_2_0 : search w8 27 4 [1, c1, t12, 1] = true := by
   decide +kernel
 
-set_option maxHeartbeats 0 in
 private theorem k8_leaf_4_2_1 : search w8 27 4 [1, c1, t12, t01] = true := by
   decide +kernel
 
-set_option maxHeartbeats 0 in
 private theorem k8_leaf_4_2_2 : search w8 27 4 [1, c1, t12, t12] = true := by
   decide +kernel
 
-set_option maxHeartbeats 0 in
 private theorem k8_leaf_4_2_3 : search w8 27 4 [1, c1, t12, t02] = true := by
   decide +kernel
 
-set_option maxHeartbeats 0 in
 private theorem k8_leaf_4_2_4 : search w8 27 4 [1, c1, t12, c1] = true := by
   decide +kernel
 
-set_option maxHeartbeats 0 in
 private theorem k8_leaf_4_2_5 : search w8 27 4 [1, c1, t12, c2] = true := by
   decide +kernel
 
-set_option maxHeartbeats 0 in
 private theorem k8_leaf_4_3_0 : search w8 27 4 [1, c1, t02, 1] = true := by
   decide +kernel
 
-set_option maxHeartbeats 0 in
 private theorem k8_leaf_4_3_1 : search w8 27 4 [1, c1, t02, t01] = true := by
   decide +kernel
 
-set_option maxHeartbeats 0 in
 private theorem k8_leaf_4_3_2 : search w8 27 4 [1, c1, t02, t12] = true := by
   decide +kernel
 
-set_option maxHeartbeats 0 in
 private theorem k8_leaf_4_3_3 : search w8 27 4 [1, c1, t02, t02] = true := by
   decide +kernel
 
-set_option maxHeartbeats 0 in
 private theorem k8_leaf_4_3_4 : search w8 27 4 [1, c1, t02, c1] = true := by
   decide +kernel
 
-set_option maxHeartbeats 0 in
 private theorem k8_leaf_4_3_5 : search w8 27 4 [1, c1, t02, c2] = true := by
   decide +kernel
 
-set_option maxHeartbeats 0 in
 private theorem k8_leaf_4_4_0 : search w8 27 4 [1, c1, c1, 1] = true := by
   decide +kernel
 
-set_option maxHeartbeats 0 in
 private theorem k8_leaf_4_4_1 : search w8 27 4 [1, c1, c1, t01] = true := by
   decide +kernel
 
-set_option maxHeartbeats 0 in
 private theorem k8_leaf_4_4_2 : search w8 27 4 [1, c1, c1, t12] = true := by
   decide +kernel
 
-set_option maxHeartbeats 0 in
 private theorem k8_leaf_4_4_3 : search w8 27 4 [1, c1, c1, t02] = true := by
   decide +kernel
 
-set_option maxHeartbeats 0 in
 private theorem k8_leaf_4_4_4 : search w8 27 4 [1, c1, c1, c1] = true := by
   decide +kernel
 
-set_option maxHeartbeats 0 in
 private theorem k8_leaf_4_4_5 : search w8 27 4 [1, c1, c1, c2] = true := by
   decide +kernel
 
-set_option maxHeartbeats 0 in
 private theorem k8_leaf_4_5_0 : search w8 27 4 [1, c1, c2, 1] = true := by
   decide +kernel
 
-set_option maxHeartbeats 0 in
 private theorem k8_leaf_4_5_1 : search w8 27 4 [1, c1, c2, t01] = true := by
   decide +kernel
 
-set_option maxHeartbeats 0 in
 private theorem k8_leaf_4_5_2 : search w8 27 4 [1, c1, c2, t12] = true := by
   decide +kernel
 
-set_option maxHeartbeats 0 in
 private theorem k8_leaf_4_5_3 : search w8 27 4 [1, c1, c2, t02] = true := by
   decide +kernel
 
-set_option maxHeartbeats 0 in
 private theorem k8_leaf_4_5_4 : search w8 27 4 [1, c1, c2, c1] = true := by
   decide +kernel
 
-set_option maxHeartbeats 0 in
 private theorem k8_leaf_4_5_5 : search w8 27 4 [1, c1, c2, c2] = true := by
   decide +kernel
 
-set_option maxHeartbeats 0 in
 private theorem k8_leaf_5_0_0 : search w8 27 4 [1, c2, 1, 1] = true := by
   decide +kernel
 
-set_option maxHeartbeats 0 in
 private theorem k8_leaf_5_0_1 : search w8 27 4 [1, c2, 1, t01] = true := by
   decide +kernel
 
-set_option maxHeartbeats 0 in
 private theorem k8_leaf_5_0_2 : search w8 27 4 [1, c2, 1, t12] = true := by
   decide +kernel
 
-set_option maxHeartbeats 0 in
 private theorem k8_leaf_5_0_3 : search w8 27 4 [1, c2, 1, t02] = true := by
   decide +kernel
 
-set_option maxHeartbeats 0 in
 private theorem k8_leaf_5_0_4 : search w8 27 4 [1, c2, 1, c1] = true := by
   decide +kernel
 
-set_option maxHeartbeats 0 in
 private theorem k8_leaf_5_0_5 : search w8 27 4 [1, c2, 1, c2] = true := by
   decide +kernel
 
-set_option maxHeartbeats 0 in
 private theorem k8_leaf_5_1_0 : search w8 27 4 [1, c2, t01, 1] = true := by
   decide +kernel
 
-set_option maxHeartbeats 0 in
 private theorem k8_leaf_5_1_1 : search w8 27 4 [1, c2, t01, t01] = true := by
   decide +kernel
 
-set_option maxHeartbeats 0 in
 private theorem k8_leaf_5_1_2 : search w8 27 4 [1, c2, t01, t12] = true := by
   decide +kernel
 
-set_option maxHeartbeats 0 in
 private theorem k8_leaf_5_1_3 : search w8 27 4 [1, c2, t01, t02] = true := by
   decide +kernel
 
-set_option maxHeartbeats 0 in
 private theorem k8_leaf_5_1_4 : search w8 27 4 [1, c2, t01, c1] = true := by
   decide +kernel
 
-set_option maxHeartbeats 0 in
 private theorem k8_leaf_5_1_5 : search w8 27 4 [1, c2, t01, c2] = true := by
   decide +kernel
 
-set_option maxHeartbeats 0 in
 private theorem k8_leaf_5_2_0 : search w8 27 4 [1, c2, t12, 1] = true := by
   decide +kernel
 
-set_option maxHeartbeats 0 in
 private theorem k8_leaf_5_2_1 : search w8 27 4 [1, c2, t12, t01] = true := by
   decide +kernel
 
-set_option maxHeartbeats 0 in
 private theorem k8_leaf_5_2_2 : search w8 27 4 [1, c2, t12, t12] = true := by
   decide +kernel
 
-set_option maxHeartbeats 0 in
 private theorem k8_leaf_5_2_3 : search w8 27 4 [1, c2, t12, t02] = true := by
   decide +kernel
 
-set_option maxHeartbeats 0 in
 private theorem k8_leaf_5_2_4 : search w8 27 4 [1, c2, t12, c1] = true := by
   decide +kernel
 
-set_option maxHeartbeats 0 in
 private theorem k8_leaf_5_2_5 : search w8 27 4 [1, c2, t12, c2] = true := by
   decide +kernel
 
-set_option maxHeartbeats 0 in
 private theorem k8_leaf_5_3_0 : search w8 27 4 [1, c2, t02, 1] = true := by
   decide +kernel
 
-set_option maxHeartbeats 0 in
 private theorem k8_leaf_5_3_1 : search w8 27 4 [1, c2, t02, t01] = true := by
   decide +kernel
 
-set_option maxHeartbeats 0 in
 private theorem k8_leaf_5_3_2 : search w8 27 4 [1, c2, t02, t12] = true := by
   decide +kernel
 
-set_option maxHeartbeats 0 in
 private theorem k8_leaf_5_3_3 : search w8 27 4 [1, c2, t02, t02] = true := by
   decide +kernel
 
-set_option maxHeartbeats 0 in
 private theorem k8_leaf_5_3_4 : search w8 27 4 [1, c2, t02, c1] = true := by
   decide +kernel
 
-set_option maxHeartbeats 0 in
 private theorem k8_leaf_5_3_5 : search w8 27 4 [1, c2, t02, c2] = true := by
   decide +kernel
 
-set_option maxHeartbeats 0 in
 private theorem k8_leaf_5_4_0 : search w8 27 4 [1, c2, c1, 1] = true := by
   decide +kernel
 
-set_option maxHeartbeats 0 in
 private theorem k8_leaf_5_4_1 : search w8 27 4 [1, c2, c1, t01] = true := by
   decide +kernel
 
-set_option maxHeartbeats 0 in
 private theorem k8_leaf_5_4_2 : search w8 27 4 [1, c2, c1, t12] = true := by
   decide +kernel
 
-set_option maxHeartbeats 0 in
 private theorem k8_leaf_5_4_3 : search w8 27 4 [1, c2, c1, t02] = true := by
   decide +kernel
 
-set_option maxHeartbeats 0 in
 private theorem k8_leaf_5_4_4 : search w8 27 4 [1, c2, c1, c1] = true := by
   decide +kernel
 
-set_option maxHeartbeats 0 in
 private theorem k8_leaf_5_4_5 : search w8 27 4 [1, c2, c1, c2] = true := by
   decide +kernel
 
-set_option maxHeartbeats 0 in
 private theorem k8_leaf_5_5_0 : search w8 27 4 [1, c2, c2, 1] = true := by
   decide +kernel
 
-set_option maxHeartbeats 0 in
 private theorem k8_leaf_5_5_1 : search w8 27 4 [1, c2, c2, t01] = true := by
   decide +kernel
 
-set_option maxHeartbeats 0 in
 private theorem k8_leaf_5_5_2 : search w8 27 4 [1, c2, c2, t12] = true := by
   decide +kernel
 
-set_option maxHeartbeats 0 in
 private theorem k8_leaf_5_5_3 : search w8 27 4 [1, c2, c2, t02] = true := by
   decide +kernel
 
-set_option maxHeartbeats 0 in
 private theorem k8_leaf_5_5_4 : search w8 27 4 [1, c2, c2, c1] = true := by
   decide +kernel
 
-set_option maxHeartbeats 0 in
 private theorem k8_leaf_5_5_5 : search w8 27 4 [1, c2, c2, c2] = true := by
   decide +kernel
 
