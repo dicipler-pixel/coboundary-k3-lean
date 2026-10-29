@@ -17,3 +17,26 @@ references:
       - family-names: "Beasley"
         given-names: "Jeromie"
     doi: "10.5281/zenodo.22090958"
+  - type: article
+    title: "Stability of homomorphisms, coverings and cocycles I: equivalence"
+    authors:
+      - family-names: "Chapman"
+        given-names: "Michael"
+      - family-names: "Lubotzky"
+        given-names: "Alexander"
+    journal: "European Journal of Mathematics"
+    volume: 11
+    year: 2025
+    url: "https://arxiv.org/abs/2310.17474"
+  - type: article
+    title: "Stability of homomorphisms, coverings and cocycles II: examples, applications and open problems"
+    authors:
+      - family-names: "Chapman"
+        given-names: "Michael"
+      - family-names: "Lubotzky"
+        given-names: "Alexander"
+    journal: "Advances in Mathematics"
+    volume: 463
+    year: 2025
+    start: 110117
+    url: "https://arxiv.org/abs/2311.06706"
