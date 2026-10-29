@@ -725,3 +725,7 @@ theorem h1_eq_k_div_three : ∀ k ∈ ({4, 5, 6, 7, 8} : Finset ℕ), h1 k = (k 
   · rw [h1_eq_k8]; all_goals norm_num
 
 end CoboundaryK3
+
+#print axioms CoboundaryK3.h1_eq_k_div_three
+#print axioms CoboundaryK3.star_gauge_sum
+example : (1 : Nat) = 2 := by decide

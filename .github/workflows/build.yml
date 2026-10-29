@@ -25,4 +25,6 @@ jobs:
           lake env lean Scratch.lean > out.log 2>&1
           s=$?
           cat out.log
+          python3 -c "import sys; t=open('out.log').read(); print('::warning title=scratch out::'+t.replace('%','%25').replace(chr(10),'%0A')[:30000])"
+          echo "lean exit $s"
           exit $s
