@@ -25,6 +25,6 @@ jobs:
           lake env lean Scratch.lean > out.log 2>&1
           s=$?
           cat out.log
-          python3 -c "import sys; t=open('out.log').read(); print('::warning title=scratch out::'+t.replace('%','%25').replace(chr(10),'%0A')[:30000])"
+          grep -v -E 'declaration uses .sorry.' out.log | grep -E -A6 'error|axioms' | head -80 > short.log || true; python3 -c "t=open('short.log').read(); print('::warning title=scratch out::'+t.replace('%','%25').replace(chr(10),'%0A')[:3500])"
           echo "lean exit $s"
           exit $s

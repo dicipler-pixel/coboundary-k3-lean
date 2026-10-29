@@ -289,6 +289,7 @@ example : cost w4 (fun _ => 1) = 6 := by decide +kernel
 end CoboundaryK3
 
 
+
 namespace CoboundaryK3
 
 open Equiv
@@ -346,10 +347,8 @@ private theorem lsum_flatMap {ι κ : Type*} (l : List ι) (f : ι → List κ) 
   induction l with
   | nil => simp
   | cons a t ih =>
-    first
-      | simp only [List.flatMap_cons, List.map_append, List.sum_append, List.map_cons,
-          List.sum_cons, ih]
-      | simp [ih]
+    simp only [List.flatMap_cons, List.map_append, List.sum_append, List.map_cons, List.sum_cons,
+      ih]
 
 private theorem lsum_filter {ι : Type*} (l : List ι) (p : ι → Bool) (f : ι → ℕ) :
     ((l.filter p).map f).sum = (l.map fun a => if p a = true then f a else 0).sum := by
@@ -357,13 +356,9 @@ private theorem lsum_filter {ι : Type*} (l : List ι) (p : ι → Bool) (f : ι
   | nil => simp
   | cons a t ih =>
     by_cases hp : p a = true
-    · first
-        | simp only [List.filter_cons_of_pos hp, List.map_cons, List.sum_cons, ih, if_pos hp]
-        | simp [List.filter_cons, hp, ih]
-    · first
-        | simp only [List.filter_cons_of_neg hp, List.map_cons, List.sum_cons, ih, if_neg hp,
-            zero_add]
-        | simp [List.filter_cons, hp, ih]
+    · simp only [List.filter_cons_of_pos hp, List.map_cons, List.sum_cons, ih, ite_eq_left hp]
+    · simp only [List.filter_cons_of_neg hp, List.map_cons, List.sum_cons, ih, ite_eq_right hp,
+        zero_add]
 
 /-- A sum over the edges `u < v` as a double sum over vertices. -/
 theorem sum_edges (g : Fin k → Fin k → ℕ) :
@@ -423,16 +418,16 @@ theorem cost_eq_zero_iff (α : Fin k → Fin k → S3) (β : Fin k → S3) :
     have h1 := (Finset.sum_eq_zero_iff.mp h) u (Finset.mem_univ u)
     have h2 : (if u < v then moved ((β u)⁻¹ * α u v * β v) else 0) = 0 :=
       (Finset.sum_eq_zero_iff.mp h1) v (Finset.mem_univ v)
-    rw [if_pos huv, moved_eq_zero_iff] at h2
+    rw [ite_eq_left huv, moved_eq_zero_iff] at h2
     calc α u v = β u * ((β u)⁻¹ * α u v * β v) * (β v)⁻¹ := by group
       _ = β u * (β v)⁻¹ := by rw [h2, mul_one]
   · intro h
     refine Finset.sum_eq_zero fun u _ => Finset.sum_eq_zero fun v _ => ?_
     show (if u < v then moved ((β u)⁻¹ * α u v * β v) else 0) = 0
     by_cases huv : u < v
-    · rw [if_pos huv, moved_eq_zero_iff, h u v huv]
+    · rw [ite_eq_left huv, moved_eq_zero_iff, h u v huv]
       group
-    · rw [if_neg huv]
+    · rw [ite_eq_right huv]
 
 /-- **The definition means what it says.** The gauge distance of `α` is zero exactly when `α`
 is a `Sym(3)`-valued coboundary, `α(u,v) = β(u) β(v)⁻¹` on every edge `u < v`. -/
@@ -542,9 +537,9 @@ theorem val_swap (α : Fin k → Fin k → S3) {u v : Fin k} (h : u ≠ v) :
     val α v u = (val α u v)⁻¹ := by
   unfold val
   rcases lt_trichotomy u v with huv | huv | huv
-  · rw [if_neg (not_lt.mpr huv.le), if_pos huv]
+  · rw [ite_eq_right (not_lt.mpr huv.le), ite_eq_left huv]
   · exact absurd huv h
-  · rw [if_pos huv, if_neg (not_lt.mpr huv.le), inv_inv]
+  · rw [ite_eq_left huv, ite_eq_right (not_lt.mpr huv.le), inv_inv]
 
 /-- Entering a triangle at another vertex conjugates the holonomy. -/
 theorem moved_hol_rot (α : Fin k → Fin k → S3) (a b c : Fin k) :
@@ -575,24 +570,24 @@ def starGauge (α : Fin k → Fin k → S3) (x u : Fin k) : S3 :=
 /-- Away from `x`, the star-gauge term of an edge is the holonomy of its triangle with `x`. -/
 theorem star_hol (α : Fin k → Fin k → S3) {x u v : Fin k} (huv : u < v) (hxu : x ≠ u)
     (hxv : x ≠ v) : (starGauge α x u)⁻¹ * α u v * starGauge α x v = hol α x u v := by
-  have hval : val α u v = α u v := if_pos huv
+  have hval : val α u v = α u v := ite_eq_left huv
   unfold starGauge hol
-  rw [if_neg (Ne.symm hxu), if_neg (Ne.symm hxv), val_swap α hxu, inv_inv, hval]
+  rw [ite_eq_right (Ne.symm hxu), ite_eq_right (Ne.symm hxv), val_swap α hxu, inv_inv, hval]
 
 /-- An edge leaving `x` is free under the star gauge at `x`. -/
 theorem star_left (α : Fin k → Fin k → S3) {u v : Fin k} (huv : u < v) :
     (starGauge α u u)⁻¹ * α u v * starGauge α u v = 1 := by
-  have hval : val α u v = α u v := if_pos huv
+  have hval : val α u v = α u v := ite_eq_left huv
   unfold starGauge
-  rw [if_pos (rfl : u = u), if_neg huv.ne', val_swap α huv.ne, hval]
+  rw [ite_eq_left (rfl : u = u), ite_eq_right huv.ne', val_swap α huv.ne, hval]
   group
 
 /-- An edge entering `x` is free under the star gauge at `x`. -/
 theorem star_right (α : Fin k → Fin k → S3) {u v : Fin k} (huv : u < v) :
     (starGauge α v u)⁻¹ * α u v * starGauge α v v = 1 := by
-  have hval : val α u v = α u v := if_pos huv
+  have hval : val α u v = α u v := ite_eq_left huv
   unfold starGauge
-  rw [if_neg huv.ne, if_pos (rfl : v = v), hval]
+  rw [ite_eq_right huv.ne, ite_eq_left (rfl : v = v), hval]
   group
 
 /-- The star-gauge term of one edge, split by where `x` sits relative to `u < v`. -/
@@ -605,27 +600,27 @@ theorem star_point (α : Fin k → Fin k → S3) (x u v : Fin k) :
   · rcases lt_trichotomy x u with hxu | hxu | hxu
     · have hxv : x < v := hxu.trans huv
       rw [star_hol α huv hxu.ne hxv.ne]
-      simp only [if_pos huv, if_pos (And.intro hxu huv),
-        if_neg (fun h : u < x ∧ x < v => lt_asymm hxu h.1),
-        if_neg (fun h : u < v ∧ v < x => lt_asymm hxv h.2), add_zero]
+      simp only [ite_eq_left huv, ite_eq_left (And.intro hxu huv),
+        ite_eq_right (fun h : u < x ∧ x < v => lt_asymm hxu h.1),
+        ite_eq_right (fun h : u < v ∧ v < x => lt_asymm hxv h.2), add_zero]
     · rw [hxu, star_left α huv]
-      simp only [if_pos huv, moved_one, if_neg (fun h : u < u ∧ u < v => lt_irrefl u h.1),
-        if_neg (fun h : u < v ∧ v < u => lt_asymm huv h.2), add_zero]
+      simp only [ite_eq_left huv, moved_one, ite_eq_right (fun h : u < u ∧ u < v => lt_irrefl u h.1),
+        ite_eq_right (fun h : u < v ∧ v < u => lt_asymm huv h.2), add_zero]
     · rcases lt_trichotomy x v with hxv | hxv | hxv
       · rw [star_hol α huv hxu.ne' hxv.ne, moved_hol_swap α hxu.ne' huv.ne hxv.ne']
-        simp only [if_pos huv, if_neg (fun h : x < u ∧ u < v => lt_asymm hxu h.1),
-          if_pos (And.intro hxu hxv), if_neg (fun h : u < v ∧ v < x => lt_asymm hxv h.2),
+        simp only [ite_eq_left huv, ite_eq_right (fun h : x < u ∧ u < v => lt_asymm hxu h.1),
+          ite_eq_left (And.intro hxu hxv), ite_eq_right (fun h : u < v ∧ v < x => lt_asymm hxv h.2),
           zero_add, add_zero]
       · rw [hxv, star_right α huv]
-        simp only [if_pos huv, moved_one, if_neg (fun h : v < u ∧ u < v => lt_asymm huv h.1),
-          if_neg (fun h : u < v ∧ v < v => lt_irrefl v h.2), add_zero]
+        simp only [ite_eq_left huv, moved_one, ite_eq_right (fun h : v < u ∧ u < v => lt_asymm huv h.1),
+          ite_eq_right (fun h : u < v ∧ v < v => lt_irrefl v h.2), add_zero]
       · rw [star_hol α huv hxu.ne' hxv.ne', moved_hol_rot α x u v]
-        simp only [if_pos huv, if_neg (fun h : x < u ∧ u < v => lt_asymm hxu h.1),
-          if_neg (fun h : u < x ∧ x < v => lt_asymm hxv h.2), if_pos (And.intro huv hxv),
+        simp only [ite_eq_left huv, ite_eq_right (fun h : x < u ∧ u < v => lt_asymm hxu h.1),
+          ite_eq_right (fun h : u < x ∧ x < v => lt_asymm hxv h.2), ite_eq_left (And.intro huv hxv),
           zero_add]
-  · simp only [if_neg huv, if_neg (fun h : x < u ∧ u < v => huv h.2),
-      if_neg (fun h : u < x ∧ x < v => huv (h.1.trans h.2)),
-      if_neg (fun h : u < v ∧ v < x => huv h.1), add_zero]
+  · simp only [ite_eq_right huv, ite_eq_right (fun h : x < u ∧ u < v => huv h.2),
+      ite_eq_right (fun h : u < x ∧ x < v => huv (h.1.trans h.2)),
+      ite_eq_right (fun h : u < v ∧ v < x => huv h.1), add_zero]
 
 /-- **The double count.** The star gauges at the `k` vertices cost `3N` in total: each triangle
 is counted once from each of its three vertices. -/
