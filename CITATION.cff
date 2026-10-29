@@ -12,11 +12,14 @@ license:
 repository-code: "https://github.com/dicipler-pixel/coboundary-k3-lean"
 references:
   - type: article
-    title: "The Permutation Coboundary Constant of the Complete Complex Is k/3 for 4 ≤ k ≤ 8"
+    title: "The Permutation Coboundary Constant of the Complete Complex Is k/3 for Every k ≥ 4"
     authors:
       - family-names: "Beasley"
         given-names: "Jeromie"
-    doi: "10.5281/zenodo.22090958"
+    version: "7"
+    date-published: 2026-10-08
+    doi: "10.5281/zenodo.23245792"
+    notes: "Concept DOI 10.5281/zenodo.22090958 always opens the newest version."
   - type: article
     title: "Stability of homomorphisms, coverings and cocycles I: equivalence"
     authors:
