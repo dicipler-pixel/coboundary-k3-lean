@@ -4,7 +4,7 @@
 
 [![Lean proof check](https://github.com/dicipler-pixel/coboundary-k3-lean/actions/workflows/build.yml/badge.svg)](https://github.com/dicipler-pixel/coboundary-k3-lean/actions/workflows/build.yml)
 ![Lean](https://img.shields.io/badge/Lean-v4.34.1-blue)
-![Theorems](https://img.shields.io/badge/theorems-67-2EA043)
+![Theorems](https://img.shields.io/badge/theorems-86-2EA043)
 ![sorry](https://img.shields.io/badge/sorry-0-2EA043)
 ![Code: MIT](https://img.shields.io/badge/code-MIT-lightgrey)
 ![Text: CC BY 4.0](https://img.shields.io/badge/text-CC%20BY%204.0-lightgrey)
@@ -26,7 +26,9 @@ minimum is the true minimum over every gauge. Lean now checks that exhaustively,
 Lean also defines the constant itself: `gaugeDist α` is the minimum cost over every `Sym(3)`
 gauge (zero exactly on coboundaries), and `h1 k` is the infimum of `N/D` over every
 non-coboundary `Sym(3)` cochain on `K_k`. The witnesses give `h1 k ≤ k/3`, the star-gauge
-double count gives `k/3 ≤ h1 k`, and together `h1 k = k/3` for `k = 4, …, 8`.
+double count gives `k/3 ≤ h1 k`, and together `h1 k = k/3` for `k = 4, …, 8`. Balanced
+replication of the `k = 4` witness extends this to every multiple of four: `h1 (4q) = 4q/3` for
+every `q ≥ 1`.
 
 ## What is proved
 
@@ -44,11 +46,14 @@ double count gives `k/3 ≤ h1 k`, and together `h1 k = k/3` for `k = 4, …, 8`
 | Theorem 4, upper half | `h₁(K_k) ≤ k/3` from each witness, whose gauge distance is exactly `D` | `h1_le_k4` … `h1_le_k8`, `gaugeDist_w4` … `gaugeDist_w8`, `h1_le_of_pos` |
 | Prop. 1 (lower half) | The star gauges cost `3N` in total, so `k · D ≤ 3N` for every cochain and `k/3 ≤ h₁(K_k)` whenever a non-coboundary exists | `star_gauge_sum`, `gaugeDist_mul_le`, `k_div_three_le_h1` |
 | Definitions | `gaugeDist` is the minimum gauge cost, attained, and zero exactly on coboundaries; `h1` is the infimum of `N/D` over non-coboundaries, and is `≥ 0` | `gaugeDist_le`, `exists_cost_eq_gaugeDist`, `le_gaugeDist`, `gaugeDist_eq_zero_iff`, `cost_eq_zero_iff`, `h1_nonneg` |
+| Lemma 6 | Balanced replication on `K_{kq}`, for every cochain, every `k` and every `q`: the defect is multiplied by `q³`, a gauge constant on clusters costs `q²` times its seed cost, and every gauge costs at least `q²` times the seed minimum (a finite count over the `q^k` sections) | `rep_defect`, `rep_attain`, `rep_lower` |
+| Corollary 7 | The replicated `k = 4` seed has `N = 8q³` and gauge distance exactly `6q²`, so `h₁(K_{4q}) = 4q/3` for every `q ≥ 1` | `rep_seed`, `gaugeDist_rep_seed`, `h1_eq_four_mul` |
 | Theorem 13 | `⟨e_{πi}−e_i, e_{πj}−e_j⟩ = 2[i=j] − [πi=j] − [πj=i]`: these inner products are the entries of `2I − A`, the Laplacian of the cycle graph of `π`, so the Gram matrix normalised by `½` is half that Laplacian; and the identity `2 − 2cos 2x = 4 sin² x` that rewrites the cycle eigenvalues (the eigenvalues themselves are cited) | `delta_prod`, `disp_gram`, `cycle_laplacian_eigen` |
 
 The witnesses are in [`CoboundaryK3/Basic.lean`](CoboundaryK3/Basic.lean); the constant, its
 definition and both bounds are in [`CoboundaryK3/Constant.lean`](CoboundaryK3/Constant.lean),
-which uses only the five witness theorems, not their exhaustions. The exhaustions run in the
+which uses only the five witness theorems, not their exhaustions. Replication and the value at every
+multiple of four are in [`CoboundaryK3/Replication.lean`](CoboundaryK3/Replication.lean). The exhaustions run in the
 Lean kernel (`decide +kernel`), not in compiled code: no `native_decide`, and the axiom audit
 still passes. For `k = 6`, `7` and `8` the search is split by the gauge on the first vertices
 (6, 36 and 216 kernel-checked leaves), and the pieces are assembled by `search_split`. The full
