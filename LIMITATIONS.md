@@ -2,7 +2,7 @@
 
 Lean proves exactly the statements written, under exactly the hypotheses written.
 
-* The lower bound `h₁(K_k, Sym) ≥ k/3` is Chapman–Lubotzky's Proposition 3.2. It is formalized
+* The lower bound `h₁(K_k, Sym) ≥ k/3` is Chapman–Lubotzky's Proposition 3.2 (README, reference [2]). It is formalized
   here only for `Sym(3)`-valued cochains and gauges in the same-degree counting convention
   (`h1`, the infimum of the moved-point ratio `N/D`; `k_div_three_le_h1`), which with the
   witnesses gives `h1 k = k/3` for `k = 4, …, 8`. The general symmetric-group statement and the
