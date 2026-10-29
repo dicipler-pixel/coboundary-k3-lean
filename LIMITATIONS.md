@@ -2,8 +2,13 @@
 
 Lean proves exactly the statements written, under exactly the hypotheses written.
 
-* The lower bound `h₁(K_k, Sym) ≥ k/3` is Chapman–Lubotzky's Proposition 3.2, cited and not
-  formalized. With it, the witnesses here give equality for `k = 4, …, 8`.
+* The lower bound `h₁(K_k, Sym) ≥ k/3` is Chapman–Lubotzky's Proposition 3.2. It is formalized
+  here only for `Sym(3)`-valued cochains and gauges in the same-degree counting convention
+  (`h1`, the infimum of the moved-point ratio `N/D`; `k_div_three_le_h1`), which with the
+  witnesses gives `h1 k = k/3` for `k = 4, …, 8`. The general symmetric-group statement and the
+  paper's cross-degree convention are not formalized; for those the bound remains cited.
+* `k_div_three_le_h1` takes the existence of a non-coboundary as a hypothesis; it is supplied
+  by the witnesses for `k = 4, …, 8` and not proved for other `k`.
 * The gauge minimum is taken over `Sym(3)`-valued gauges, as in the paper's Appendix B.
 * The coefficient-subgroup minima of Proposition 4 (`Sym(2)` gives 2, `ℤ/3` gives 3/2), the
   all-cochain exhaustion at `k = 4`, and Conjecture 5 are not formalized.
