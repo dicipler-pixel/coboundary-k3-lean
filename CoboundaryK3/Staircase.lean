@@ -217,7 +217,7 @@ theorem st_cnt_odd (t : ℕ) : ∑ p ∈ range (2 * t + 1), bnat (decide (p % 2 
 /-- Among the positions `0, …, 2t`, exactly `t + 1` are even. -/
 theorem st_cnt_even (t : ℕ) : ∑ p ∈ range (2 * t + 1), bnat (!decide (p % 2 = 1)) = t + 1 := by
   induction t with
-  | zero => simp [bnat]
+  | zero => first | rfl | decide | (rw [Finset.sum_range_one]; rfl)
   | succ t ih =>
     have h1 : (2 * t + 1) % 2 = 1 := by omega
     have h2 : (2 * t + 1 + 1) % 2 = 0 := by omega
