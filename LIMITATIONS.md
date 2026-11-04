@@ -12,10 +12,10 @@ Lean proves exactly the statements written, under exactly the hypotheses written
 * The gauge minimum is taken over `Sym(3)`-valued gauges, as in Section 1 of the paper.
 * The coefficient-subgroup minima of Proposition 5 (`Sym(2)` gives 2, `ℤ/3` gives 3/2) and the
   all-cochain exhaustion at `k = 4` are not formalized.
-* The balanced replication of Lemma 6 and Corollary 7 is formalized, so `h1 k = k/3` is proved
-  for `k = 4, …, 8` and for every multiple of four. The rest of Theorem 8 (`h₁ = k/3` for every
-  `k ≥ 4`) is not: Kozlov's binary witnesses for `k` not a power of two and the parity retraction
-  that embeds them, and the cross-degree comparison of Proposition 10.
+* The balanced replication of Lemma 6 and Corollary 7 is formalized, and with Kozlov's staircase
+  seeds (`CoboundaryK3/Staircase.lean`) so is Theorem 8 in the `Sym(3)` counting convention:
+  `h1 k = k/3` for every `k ≥ 3` (`h1_eq_all`). The cross-degree comparison of Proposition 10 is
+  not formalized.
 * Section 5 beyond the Gram formula of Theorem 13 is not formalized (the twisted torsion, cycle-type
   recovery, Schreier aggregates, the entropy and its deficit, graph projectors, the fixed probe).
   The eigenvalues `2 − 2cos(2πj/ℓ)` of the cycle Laplacian are cited; only their rewriting as
