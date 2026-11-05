@@ -14,6 +14,11 @@ Here the vertices are numbered `u = 0`, `vᵢ = 2i - 1`, `y_j = 2j`, so an edge 
 `t01` exactly when `p` is odd and `q` is even (`stair`). The witnesses `w5` and `w7` of `Basic`
 are the staircases for `t = 2, 3` up to relabelling.
 
+Attribution: the seeds are Kozlov's staircase graphs [D. N. Kozlov, arXiv:1610.07136, Def. 3.2
+and §3.1]; the cut-minimality bound is proved directly here, following [Kozlov, Lemma 3.8 and
+Cor. 3.13] (triangle count after [Kozlov, Lemma 3.10]); the `Sym(3)` transfer (parity retraction)
+and the `k/3` theorem are [Beasley, Cor. 7, Thm. 8]. Kozlov's paper treats `𝔽₂` coefficients.
+
 All counts are moved-point counts, as in `Basic`: a staircase edge costs `2`.
 
 * `stair_gaugeDist`: the gauge distance of the staircase on `K_{2t+1}` is exactly `t(t+1)`,
@@ -255,8 +260,9 @@ theorem st_ab_bound (A B : Bool) :
   cases A <;> cases B <;> decide
 
 /-- **Cut-minimality.** Every sign pattern on the staircase of `K_{2t+1}` costs at least the
-number of edges `t(t+1)/2`. Adding the two newest positions `2t+1` (a new `v`, joined to every
-earlier `y`) and `2t+2` (a new `y`, joined only to it) adds at least `t + 1`: if their signs agree,
+number of edges `t(t+1)/2`. Adding the two newest positions `2t+1` (a new `v`, whose only
+neighbour is the new `y`) and `2t+2` (a new `y`, joined to every `v`, the new one included) adds
+at least `t + 1`: if their signs agree,
 each of the `t` odd earlier positions contributes one and the new edge one; if they differ, each of
 the `t + 1` even earlier positions contributes one. -/
 theorem st_cutF_ge (t : ℕ) : ∀ σ : ℕ → Bool, t * (t + 1) ≤ 2 * cutF σ (2 * t + 1) := by
