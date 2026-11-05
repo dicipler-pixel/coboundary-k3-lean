@@ -30,7 +30,7 @@ All counts are moved-point counts, as in `Basic`: a staircase edge costs `2`.
 * `h1_mul_of_seed`: balanced replication (`rep_defect`, `rep_attain`, `rep_lower`) turns any
   seed with `3N = mD` into `h₁(K_{mq}) = mq/3` for every `q ≥ 1`.
 * `h1_eq_all`: every `k ≥ 3` is `4q` or `(2t+1)q` with `t ≥ 1`, so `h₁(K_k) = k/3` for every
-  `k ≥ 3` (`h1_eq_k_div_three_ge_four`: the paper's Theorem 8, every `k ≥ 4`).
+  `k ≥ 3` (`h1_eq_k_div_three_ge_four`: Beasley's Theorem 8, every `k ≥ 4`).
 -/
 
 namespace CoboundaryK3
@@ -563,7 +563,7 @@ theorem h1_eq_all (k : ℕ) (hk : 3 ≤ k) : h1 k = (k : ℝ) / 3 := by
   · exact h1_eq_four_mul q hq
   · exact h1_stair_mul t q ht hq
 
-/-- **Theorem 8.** `h₁(K_k) = k/3` for every `k ≥ 4`. -/
+/-- **Theorem 8 (Beasley).** `h₁(K_k) = k/3` for every `k ≥ 4`. -/
 theorem h1_eq_k_div_three_ge_four (k : ℕ) (hk : 4 ≤ k) : h1 k = (k : ℝ) / 3 :=
   h1_eq_all k (by omega)
 
