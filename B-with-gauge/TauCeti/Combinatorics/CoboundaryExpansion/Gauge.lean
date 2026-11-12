@@ -37,17 +37,17 @@ def gauge (β : V → G) (α : Cochain X G) : Cochain X G where
   toFun u v := if ({u, v} : Finset V) ∈ X.edges then (β u)⁻¹ * α.toFun u v * β v else 1
   inv_symm u v h := by
     have h' : ({v, u} : Finset V) ∈ X.edges := by rwa [Finset.pair_comm]
-    show (if ({v, u} : Finset V) ∈ X.edges then (β v)⁻¹ * α.toFun v u * β u else 1) =
+    change (if ({v, u} : Finset V) ∈ X.edges then (β v)⁻¹ * α.toFun v u * β u else 1) =
       (if ({u, v} : Finset V) ∈ X.edges then (β u)⁻¹ * α.toFun u v * β v else 1)⁻¹
-    rw [if_pos h', if_pos h, α.inv_symm u v h]
+    rw [ite_eq_left h', ite_eq_left h, α.inv_symm u v h]
     simp [mul_assoc]
-  one_of_not_mem u v h := if_neg h
+  one_of_not_mem u v h := ite_eq_right h
 
 /-- The value of a gauged cochain on an edge. -/
 theorem gauge_toFun_of_mem (β : V → G) (α : Cochain X G) {u v : V}
     (h : ({u, v} : Finset V) ∈ X.edges) :
     (gauge β α).toFun u v = (β u)⁻¹ * α.toFun u v * β v :=
-  if_pos h
+  ite_eq_left h
 
 /-- The identity gauge acts trivially. -/
 theorem gauge_one (α : Cochain X G) : gauge (1 : V → G) α = α :=
