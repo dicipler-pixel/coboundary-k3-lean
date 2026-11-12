@@ -1,0 +1,101 @@
+# Scratch check, not for merge: compile the first piece of the Tau Ceti split
+# (general cochain definitions) on its own against a pinned TauCeti main.
+#   A-as-pushed  : Defs.lean, Cochain.lean and TwoComplex/Basic.lean exactly as in
+#                  TauCetiProject/TauCeti PR 29489 at 0f40385.
+#   B-with-gauge : the same three files plus Gauge.lean (IsCoboundary and the gauge action).
+name: Tau Ceti piece-one build
+
+on:
+  push:
+    branches: [claude-tauceti-piece1-build]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - piece: A-as-pushed
+            target: TauCeti.Combinatorics.CoboundaryExpansion.Cochain
+          - piece: B-with-gauge
+            target: TauCeti.Combinatorics.CoboundaryExpansion.Gauge
+    name: ${{ matrix.piece }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 75
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          path: overlay
+          persist-credentials: false
+
+      - uses: actions/checkout@v5
+        with:
+          repository: TauCetiProject/TauCeti
+          ref: 5b875ab7c67d980ab0da982df4faa8db09a877b4
+          path: tc
+          persist-credentials: false
+
+      - name: Free disk space
+        run: |
+          sudo rm -rf /usr/share/dotnet /usr/local/lib/android /opt/ghc /opt/hostedtoolcache/CodeQL || true
+          df -h /
+
+      - name: Overlay the piece on TauCeti main
+        run: |
+          set -euo pipefail
+          cp -rv "overlay/${{ matrix.piece }}/TauCeti/." tc/TauCeti/
+          cd tc && git status --short
+
+      - name: Install the pinned Lean toolchain
+        run: |
+          set -euo pipefail
+          curl -sSfL https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh -o "$RUNNER_TEMP/elan-init.sh"
+          bash "$RUNNER_TEMP/elan-init.sh" -y --default-toolchain "$(cat tc/lean-toolchain)"
+          echo "$HOME/.elan/bin" >> "$GITHUB_PATH"
+
+      - name: Fetch the Mathlib cache at TauCeti's pinned revision
+        working-directory: tc
+        run: |
+          set -euo pipefail
+          lean --version
+          lake exe cache get
+          df -h /
+
+      - name: Build the piece (TauCeti options, warnings are errors)
+        working-directory: tc
+        run: |
+          set +e -uo pipefail
+          lake build "${{ matrix.target }}" 2>&1 | tee build.log
+          status=${PIPESTATUS[0]}
+          echo "lake build exit status: $status"
+          if [ "$status" -ne 0 ]; then
+            echo "--- errors ---"
+            grep -n -B 2 -A 14 -E "error" build.log | head -300 || true
+            python3 - <<'PY'
+          lines = open("build.log").read().splitlines()
+          hits = [i for i, l in enumerate(lines) if "error" in l]
+          for i in hits[:12]:
+              block = "\n".join(lines[i:i + 16])
+              flat = block.replace("%", "%25").replace("\r", "").replace("\n", "%0A")
+              print("::error title=lean build::" + flat[:4000])
+          tail = "\n".join(lines[-30:])
+          print("::error title=build tail::" + tail.replace("%", "%25").replace("\r", "").replace("\n", "%0A")[:4000])
+          PY
+            exit "$status"
+          fi
+          tail -5 build.log
+
+      - name: Axioms of every theorem in the piece
+        working-directory: tc
+        run: |
+          set +e
+          lake env lean "../overlay/${{ matrix.piece }}/axioms.lean" 2>&1 | tee axioms.log
+          python3 - <<'PY'
+          text = open("axioms.log").read()
+          flat = text.replace("%", "%25").replace("\r", "").replace("\n", "%0A")
+          print("::notice title=axioms::" + flat[:6000])
+          PY
