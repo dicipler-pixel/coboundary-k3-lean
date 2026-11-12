@@ -6,6 +6,7 @@ Authors: The Tau Ceti contributors
 module
 
 public import Mathlib.Algebra.Order.Archimedean.Real.Basic
+public import Mathlib.Algebra.Order.BigOperators.Group.Finset
 public import Mathlib.Analysis.Normed.Group.Seminorm
 public import Mathlib.Data.Fintype.Prod
 public import TauCeti.Combinatorics.Hypergraph.Complex.TwoComplex.Basic
