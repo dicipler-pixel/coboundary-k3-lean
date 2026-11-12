@@ -10,3 +10,12 @@ GitHub's runners against TauCeti main pinned at `5b875ab`.
   its identity and composition laws).
 
 Nothing here is pushed to Tau Ceti.
+
+## Second round (after the split was pushed to the PR at `10d8fce`)
+
+Built against TauCeti main pinned at `396c3bd`.
+
+- `T-theirs-10d8fce/`: the three files exactly as pushed to PR 29489 at `10d8fce`.
+- `C-review-fixes/`: Claude's version of the same piece with the four changes the 12 November
+  review asked for (no `@[expose]`, `@[ext]` on `ext_edges`, the two unused imports replaced).
+- `D-review-fixes-gauge/`: `C` plus `Gauge.lean`.

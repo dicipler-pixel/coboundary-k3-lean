@@ -19,9 +19,11 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - piece: A-as-pushed
+          - piece: T-theirs-10d8fce
             target: TauCeti.Combinatorics.CoboundaryExpansion.Cochain
-          - piece: B-with-gauge
+          - piece: C-review-fixes
+            target: TauCeti.Combinatorics.CoboundaryExpansion.Cochain
+          - piece: D-review-fixes-gauge
             target: TauCeti.Combinatorics.CoboundaryExpansion.Gauge
     name: ${{ matrix.piece }}
     runs-on: ubuntu-latest
@@ -35,7 +37,7 @@ jobs:
       - uses: actions/checkout@v5
         with:
           repository: TauCetiProject/TauCeti
-          ref: 5b875ab7c67d980ab0da982df4faa8db09a877b4
+          ref: 396c3bd971e9722aa8656231760e710fe641d8cf
           path: tc
           persist-credentials: false
 
