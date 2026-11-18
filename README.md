@@ -1,6 +1,6 @@
 <div align="center">
 
-# The Permutation Coboundary Constant of the Complete Complex Is k/3 for 4 ≤ k ≤ 8 — Lean proofs
+# The Permutation Coboundary Constant of the Complete Complex Is k/3 for Every k ≥ 4 — Lean proofs
 
 [![Lean proof check](https://github.com/dicipler-pixel/coboundary-k3-lean/actions/workflows/build.yml/badge.svg)](https://github.com/dicipler-pixel/coboundary-k3-lean/actions/workflows/build.yml)
 ![Lean](https://img.shields.io/badge/Lean-v4.34.1-blue)
@@ -77,7 +77,7 @@ Mathlib v4.34.1, independent replay in Lean's kernel checker, an axiom audit (on
 Beasley, version 7 (8 October 2026), DOI
 [10.5281/zenodo.23245792](https://doi.org/10.5281/zenodo.23245792). The concept DOI
 [10.5281/zenodo.22090958](https://doi.org/10.5281/zenodo.22090958) always opens the newest version.
-This repository formalizes the cases `k = 4, …, 8`. The paper's Proposition 1 is Chapman–Lubotzky's
+This repository formalizes `h1 k = k/3` for every `k ≥ 3` in the `Sym(3)` counting convention (`h1_eq_all`): the witnesses for `k = 4, …, 8`, balanced replication, and Kozlov's staircase seeds. The paper's Theorem 8 is the `k ≥ 4` statement (`h1_eq_k_div_three_ge_four`); the Lean proof `h1_eq_all` also covers `k = 3`. What is not formalized is listed in [`LIMITATIONS.md`](LIMITATIONS.md). The paper's Proposition 1 is Chapman–Lubotzky's
 Proposition 3.2 in [2].
 
 ## References

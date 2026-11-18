@@ -1,7 +1,7 @@
 # Build every module, replay every proof in the independent kernel checker,
 # audit the axioms of every named theorem, and confirm every false control is
 # rejected. A green badge means all four passed on the exact commit shown. A first
-# step confirms the machine-made k = 7, 8 search pieces match their generator.
+# step confirms the machine-made k = 6, 7, 8 search pieces match their generator.
 name: Lean proof check
 
 on:

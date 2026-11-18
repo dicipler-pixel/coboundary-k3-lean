@@ -1,6 +1,6 @@
 cff-version: 1.2.0
 message: "If you use these Lean proofs, please cite them as below."
-title: "The Permutation Coboundary Constant of the Complete Complex Is k/3 for 4 ≤ k ≤ 8: Lean proofs"
+title: "The Permutation Coboundary Constant of the Complete Complex Is k/3 for Every k ≥ 4: Lean proofs"
 authors:
   - family-names: "Beasley"
     given-names: "Jeromie"
