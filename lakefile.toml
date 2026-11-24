@@ -1,15 +1,22 @@
 name = "coboundary-k3-lean"
 version = "1.0.0"
-defaultTargets = ["CoboundaryK3"]
+defaultTargets = ["CoboundaryK3", "Challenge", "Solution"]
 
 [[require]]
 name = "mathlib"
 git = "https://github.com/leanprover-community/mathlib4.git"
-rev = "v4.34.1"
+rev = "v4.35.0"
 
 [[lean_lib]]
 name = "CoboundaryK3"
 roots = ["CoboundaryK3.Basic", "CoboundaryK3.Constant", "CoboundaryK3.Replication", "CoboundaryK3.Staircase"]
+
+# The statement submitted to Comparator (Mathlib only), and the module that proves it from the library.
+[[lean_lib]]
+name = "Challenge"
+
+[[lean_lib]]
+name = "Solution"
 
 [leanOptions]
 relaxedAutoImplicit = false

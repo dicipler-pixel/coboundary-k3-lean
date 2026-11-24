@@ -1,0 +1,12 @@
+{
+  "challenge_module": "Challenge",
+  "solution_module": "Solution",
+  "theorem_names": [
+    "CoboundaryK3.gaugeDist_eq_zero_iff",
+    "CoboundaryK3.gaugeDist_mul_le",
+    "CoboundaryK3.h1_eq_all"
+  ],
+  "definition_names": [],
+  "permitted_axioms": ["propext", "Quot.sound", "Classical.choice"],
+  "enable_nanoda": true
+}

@@ -2,7 +2,11 @@
 Author: Jeromie Beasley (dicipler-pixel). Drafted with AI assistance (Grok Bot); every
 statement below is checked by the Lean kernel in CI.
 -/
-import CoboundaryK3.Replication
+module
+
+public import CoboundaryK3.Replication
+
+@[expose] public section
 
 /-!
 # Layer 7: Kozlov's staircase seeds, and `h₁(K_k) = k/3` for every `k ≥ 3`

@@ -20,7 +20,11 @@ It then proves both halves of `h₁(K_k) = k/3`:
 All counts are moved-point (Hamming) counts in the same degree convention as `Basic`, with
 `Sym(3)` values on the cochain and the gauge.
 -/
-import CoboundaryK3.Basic
+module
+
+public import CoboundaryK3.Basic
+
+@[expose] public section
 
 namespace CoboundaryK3
 

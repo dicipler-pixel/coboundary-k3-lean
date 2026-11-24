@@ -18,7 +18,11 @@ closing of triangles with two corners in one cluster, the restriction of a gauge
 was drafted by Grok (xAI) on 8 October 2026; the counting lemmas and the compiled proofs were
 completed with Claude.
 -/
-import CoboundaryK3.Constant
+module
+
+public import CoboundaryK3.Constant
+
+@[expose] public section
 
 namespace CoboundaryK3
 

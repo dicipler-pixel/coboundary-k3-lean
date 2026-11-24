@@ -16,11 +16,15 @@ the paper's Proposition 1 (Chapman–Lubotzky's Proposition 3.2), is proved in `
 The gauge minimum is checked by exhausting every gauge with `β(0) = 1`; `gauge_lower` proves that
 this loses nothing, because right multiplication by a constant conjugates every edge term.
 -/
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.Basic
-import Mathlib.Data.Fintype.Perm
-import Mathlib.Data.Fintype.Pi
-import Mathlib.Algebra.BigOperators.Fin
-import Mathlib.Data.List.GetD
+module
+
+public import Mathlib.Analysis.SpecialFunctions.Trigonometric.Basic
+public import Mathlib.Data.Fintype.Perm
+public import Mathlib.Data.Fintype.Pi
+public import Mathlib.Algebra.BigOperators.Fin
+public import Mathlib.Data.List.GetD
+
+@[expose] public section
 
 namespace CoboundaryK3
 
