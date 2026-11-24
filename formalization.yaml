@@ -1,0 +1,135 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/mathlib-initiative/formalization.yaml/main/schema/formalization.schema.json
+version: "v0.4"
+
+project:
+  name: "The permutation coboundary constant of the complete complex is k/3"
+  description: >-
+    On the complete 2-complex K_k, a 1-cochain puts a permutation of three points on every edge.
+    Its triangle defect N counts the points moved by the holonomy around each triangle, and its
+    gauge distance D is the least number of moved points left on the edges after relabelling at
+    the vertices. The coboundary constant h1(K_k) is the infimum of N/D over the cochains that
+    are not coboundaries. Chapman and Lubotzky proved h1(K_k) >= k/3. This formalization proves
+    that bound in the counting convention and proves that it is attained: h1(K_k) = k/3 for
+    every k >= 3, with Sym(3) coefficients. Over the two-element field Kozlov proved the constant
+    equals k/3 whenever k is not a power of two and is k/3 + O(1/k) when it is; at k = 4 and
+    k = 8 it is 2 and 20/7, strictly above k/3, and at larger powers of two its exact value is
+    open. With Sym(3) coefficients the value k/3 is attained at every k, powers of two included.
+  authors:
+    - "Jeromie Beasley"
+  license: "MIT"
+  responsible_maintainers:
+    - "Jeromie Beasley"
+
+classification:
+  arxiv: ["math.CO", "math.GR"]
+  msc2020: ["05E45", "55U10", "20B30"]
+
+sources:
+  - title: "The Permutation Coboundary Constant of the Complete Complex Is k/3 for Every k >= 4"
+    authors:
+      - "Jeromie Beasley"
+    id: "doi:10.5281/zenodo.23245792"
+    type: "preprint"
+    location: "https://doi.org/10.5281/zenodo.23245792"
+    relationship: "formalizes"
+    note: "Version 7, 8 October 2026. The concept DOI 10.5281/zenodo.22090958 opens the newest version. Not peer reviewed."
+    license: "CC-BY-4.0"
+    author_endorsement: "participated"
+  - title: "Stability of homomorphisms, coverings and cocycles II: examples, applications and open problems"
+    authors:
+      - "Michael Chapman"
+      - "Alexander Lubotzky"
+    id: "arXiv:2311.06706"
+    type: "article"
+    location: "Advances in Mathematics 463 (2025), 110117"
+    relationship: "formalizes"
+    note: "Proposition 3.2, the star-gauge lower bound, is formalized here in the counting convention as gaugeDist_mul_le."
+    license: "unknown"
+    author_endorsement: "not-contacted"
+  - title: "The first Cheeger constant of a simplex"
+    authors:
+      - "Dmitry N. Kozlov"
+    id: "arXiv:1610.07136"
+    type: "article"
+    location: "Graphs and Combinatorics 33 (2017)"
+    relationship: "adapts"
+    note: "The staircase seeds (Definition 3.2) are Kozlov's. Their cut-minimality is proved directly here, following Lemma 3.8 and Corollary 3.13. Kozlov's paper treats coefficients in the two-element field."
+    license: "unknown"
+    author_endorsement: "not-contacted"
+
+related_formalizations:
+  - id: "https://github.com/TauCetiProject/TauCeti/pull/42983"
+    relationship: "other"
+    note: "A Tau Ceti formalization of the Sym(3) constant, merged on 16 November 2026, written from a roadmap by the same author. This repository is independent of it and does not import it."
+
+status:
+  scope: >-
+    Formalized: the star-gauge lower bound k * D <= 3 * N for every Sym(3)-valued cochain on K_k
+    (gaugeDist_mul_le); that the gauge distance vanishes exactly on coboundaries
+    (gaugeDist_eq_zero_iff); and h1(K_k) = k/3 for every k >= 3 (h1_eq_all), where the cochain
+    and the gauge both take values in Sym(3) and both N and D are counts of moved points.
+    Not formalized: the paper's statement for permutation coefficients of every degree, and its
+    cross-degree convention in which a cochain may be repaired by a coboundary of another degree.
+    The paper's readings of the defect through projector geometry, entropy and twisted torsion
+    are not part of this formalization.
+  sorry_count: 0
+  sorry_in_definitions: 0
+  axioms: []
+
+automation:
+  methods:
+    - method: "agent"
+      models: ["Claude (Anthropic)", "ChatGPT (OpenAI)", "Grok (xAI)"]
+      framework: "n/a"
+      tool_setup: "AI-assisted. The witnesses at k = 4 to 8 were found by computer search and rechecked by a second program sharing no code with the first; inside Lean every gauge minimum is checked by kernel evaluation (decide +kernel), with no native_decide. The Lean proofs were written and repaired by AI models under the author's direction and checked by GitHub Actions on every push."
+      cost:
+        wall_time: "not tracked"
+        spend_usd: "subscription-based"
+        hardware: "GitHub Actions runners for every Lean check"
+      prompting_notes: "n/a"
+  spend_usd: "subscription-based"
+  notes: >-
+    The research question, the choice of Sym(3) coefficients and the direction of the work are the
+    author's. AI models searched the literature, wrote and repaired the Lean proofs and organised
+    the repository. The structure of the replication module was drafted by Grok and completed with
+    Claude. The conversion to Lean's module system and this Palomar packaging were done by Claude.
+    No statement rests on a model's say-so: every theorem is kernel-checked, replayed by an
+    independent checker, axiom-audited, and compared with Challenge.lean by Comparator in CI.
+
+fidelity:
+  divergences: >-
+    The paper's Theorem 8 is stated for k >= 4; the Lean theorem h1_eq_all also covers k = 3.
+    The Lean statement fixes the coefficient group of both the cochain and the gauge to Sym(3)
+    and uses the counting normalisation; the paper also treats arbitrary permutation degree, the
+    normalised convention k/(k-2), and the cross-degree convention, which are not formalized.
+
+review:
+  status: "self-assessed"
+  reviewers:
+    - "none"
+  notes: >-
+    No human mathematician other than the author has reviewed the paper or the statements.
+    The definitions in Challenge.lean are copied word for word from the library and were read
+    against Section 1 of the paper. A related statement was reviewed and merged by the Tau Ceti
+    project.
+
+alignment:
+  namespace: "CoboundaryK3"
+  statements:
+    - source: "Paper, Section 1 (definition of the gauge distance D)"
+      lean: "CoboundaryK3.gaugeDist_eq_zero_iff"
+      module: "CoboundaryK3.Constant"
+      status: "proved"
+      note: "The gauge distance is zero exactly on Sym(3)-valued coboundaries."
+    - source: "Paper, Proposition 1; Chapman and Lubotzky, arXiv:2311.06706, Proposition 3.2"
+      lean: "CoboundaryK3.gaugeDist_mul_le"
+      module: "CoboundaryK3.Constant"
+      status: "proved"
+      note: "Counting convention, Sym(3) coefficients."
+    - source: "Paper, Theorem 8"
+      lean: "CoboundaryK3.h1_eq_all"
+      module: "CoboundaryK3.Staircase"
+      status: "proved"
+      note: "Proved for every k >= 3 with Sym(3) coefficients; the paper states k >= 4 and further conventions."
+
+acknowledgements: "Lean 4 and Mathlib. The lower bound is Chapman and Lubotzky's; the staircase seeds are Kozlov's. AI assistance: Claude (Anthropic), ChatGPT (OpenAI), Grok (xAI)."

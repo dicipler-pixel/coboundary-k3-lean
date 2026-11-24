@@ -24,6 +24,9 @@ jobs:
       - name: The k = 6, 7 and 8 search pieces match their generator
         run: python3 scripts/gen_search_pieces.py --check
 
+      - name: Every Lean file uses the module system and is within the size limits (Palomar source rules)
+        run: python3 scripts/check-lean-sources.py
+
       - name: Free disk space (the full Mathlib cache is several GB)
         run: |
           set -euo pipefail
@@ -43,6 +46,8 @@ jobs:
           set -euo pipefail
           lean --version
           lake update
+          # The committed manifest must already be what Lake resolves: a difference fails the check.
+          git diff --exit-code lake-manifest.json
           lake exe cache get
           df -h /
 
@@ -78,6 +83,15 @@ jobs:
 
       - name: Axiom audit, theorem inventory and false controls
         run: python3 scripts/verify.py
+
+      - name: Install bubblewrap for lake comparator's sandbox
+        run: |
+          sudo apt-get update -qq >/dev/null
+          sudo apt-get install -y -qq bubblewrap >/dev/null
+          sudo sysctl -w kernel.apparmor_restrict_unprivileged_userns=0
+
+      - name: Comparator. Solution proves exactly the statements of Challenge, replayed in independent kernels
+        run: ./scripts/verify-comparator.sh
 
       - name: Keep the evidence
         if: always()

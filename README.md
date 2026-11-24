@@ -3,7 +3,7 @@
 # The Permutation Coboundary Constant of the Complete Complex Is k/3 for Every k ≥ 4 — Lean proofs
 
 [![Lean proof check](https://github.com/dicipler-pixel/coboundary-k3-lean/actions/workflows/build.yml/badge.svg)](https://github.com/dicipler-pixel/coboundary-k3-lean/actions/workflows/build.yml)
-![Lean](https://img.shields.io/badge/Lean-v4.34.1-blue)
+![Lean](https://img.shields.io/badge/Lean-v4.35.0-blue)
 ![Theorems](https://img.shields.io/badge/theorems-125-2EA043)
 ![sorry](https://img.shields.io/badge/sorry-0-2EA043)
 ![Code: MIT](https://img.shields.io/badge/code-MIT-lightgrey)
@@ -67,9 +67,34 @@ the generated text. The proof check runs `--check` first, so a hand edit to a pi
 
 ## How it is checked
 
-Every push runs [the proof check](.github/workflows/build.yml): build against Lean v4.34.1 and
-Mathlib v4.34.1, independent replay in Lean's kernel checker, an axiom audit (only `propext`,
+Every push runs [the proof check](.github/workflows/build.yml): build against Lean v4.35.0 and
+Mathlib v4.35.0, independent replay in Lean's kernel checker, an axiom audit (only `propext`,
 `Classical.choice`, `Quot.sound`), and three deliberately false statements that must fail.
+
+## The statement, and the independent comparison
+
+[`Challenge.lean`](Challenge.lean) is the one file a reader needs to audit. It imports Mathlib
+only, defines the cochain, its triangle defect, the gauge distance and the constant `h1` (copied
+word for word from the library), and states three theorems without proof:
+
+| Statement | Lean name |
+| :-- | :-- |
+| The gauge distance is zero exactly on coboundaries | `gaugeDist_eq_zero_iff` |
+| The star bound `k · D ≤ 3 · N` (Chapman–Lubotzky, Proposition 3.2) | `gaugeDist_mul_le` |
+| `h₁(K_k) = k/3` for every `k ≥ 3` | `h1_eq_all` |
+
+[`Solution.lean`](Solution.lean) imports the library, which proves the same three names. On every
+push the toolchain's `lake comparator` ([`scripts/verify-comparator.sh`](scripts/verify-comparator.sh),
+configured by [`comparator.json`](comparator.json)) confirms that each proved theorem has exactly
+the statement in `Challenge.lean`, rests only on the three standard axioms, and replays in two
+independently written kernels (nanoda and con-ron). Lean checks the proofs; no machine checks
+that `Challenge.lean` says what the paper means, which is why that file is kept short.
+
+The layout follows the [Palomar registry](https://palomar-registry.org/) template, and
+[`formalization.yaml`](formalization.yaml) holds the metadata it asks for: sources, scope, what is
+not formalized, how AI was used, and the review status. Submissions go to
+https://submit.palomar-registry.org/. Every Lean file uses Lean's module system, as the registry
+requires. No human mathematician other than the author has reviewed the paper or the statements.
 
 ## The paper
 
