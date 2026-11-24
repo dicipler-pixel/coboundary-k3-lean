@@ -10,9 +10,10 @@ project:
     the vertices. The coboundary constant h1(K_k) is the infimum of N/D over the cochains that
     are not coboundaries. Chapman and Lubotzky proved h1(K_k) >= k/3. This formalization proves
     that bound in the counting convention and proves that it is attained: h1(K_k) = k/3 for
-    every k >= 3, with Sym(3) coefficients. Over the two-element field the constant is strictly
-    larger than k/3 when k is a power of two (Meshulam and Wallach; Kozlov), so the equality at
-    those k needs non-abelian coefficients.
+    every k >= 3, with Sym(3) coefficients. Over the two-element field Kozlov proved the constant
+    equals k/3 whenever k is not a power of two and is k/3 + O(1/k) when it is; at k = 4 and
+    k = 8 it is 2 and 20/7, strictly above k/3, and at larger powers of two its exact value is
+    open. With Sym(3) coefficients the value k/3 is attained at every k, powers of two included.
   authors:
     - "Jeromie Beasley"
   license: "MIT"
