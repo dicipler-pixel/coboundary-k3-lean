@@ -46,9 +46,8 @@ jobs:
           set -euo pipefail
           lean --version
           lake update
-          echo "--- lake-manifest.json after lake update ---"
-          cat lake-manifest.json
-          echo "--- end of lake-manifest.json ---"
+          # The committed manifest must already be what Lake resolves: a difference fails the check.
+          git diff --exit-code lake-manifest.json
           lake exe cache get
           df -h /
 
